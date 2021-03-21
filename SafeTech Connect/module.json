@@ -1,0 +1,12 @@
+{
+    "id": "{CB63B943-F6AB-1781-F213-D71782650A3D}",
+    "name": "SafeTechConnect",
+    "type": 3,
+    "vendor": "SYR",
+    "aliases": ["SYR SafeTech Connect"],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "STC",
+    "url": ""
+}

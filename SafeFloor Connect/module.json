@@ -1,0 +1,12 @@
+{
+    "id": "{A389B90D-1001-0006-B510-2FCF7B35B21F}",
+    "name": "SYR_SafeFloor",
+    "type": 3,
+    "vendor": "SYR",
+    "aliases": ["SYR SafeFloor Connect"],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "SafeFloor",
+    "url": ""
+}
