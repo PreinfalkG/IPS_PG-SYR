@@ -23,19 +23,132 @@ abstract class VARIABLE
 }
 
 
-trait SYR_FunctionLib {
+trait SafeTech_FunctionLib {
 
-    protected function RequestJsonData($url) {
 
+    protected function SetAdminRights() {
+        $apiURL = "safe-tec/set/ADM/(2)f";
+    }
+
+
+
+	protected function CurlGet($url) {
+	
+        $errorMsg = NULL;
+
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, "API Request: " . $url, 0); }        
         SetValue($this->GetIDForIdent("requestCnt"), GetValue($this->GetIDForIdent("requestCnt")) + 1); 
         
-        $streamContext = stream_context_create( array('http'=> array('timeout' => 5) ) );   //5 seconds Timeout
+        $timeStart = microtime(true);
+	
+	    $options = array(
+	        CURLOPT_URL => $url,
+	        //CURLOPT_HEADER => 0,
+			CURLOPT_HTTPHEADER => array('Connection: close'),
+	        CURLOPT_RETURNTRANSFER => TRUE,
+			//CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+			//CURLOPT_USERPWD => "$login:$password",
+			CURLOPT_CONNECTTIMEOUT_MS => 600,
+	        //CURLOPT_TIMEOUT => 4,
+			CURLOPT_TIMEOUT_MS, 600,
+			CURLOPT_FORBID_REUSE => true,
+			
+	    );
+	   
+	    $ch = curl_init();
+		
+		$time_start = microtime(true);
+		
+		try {		
+		
+		    curl_setopt_array($ch, $options);
+			
+			$result =  curl_exec($ch);
+			$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        $json = file_get_contents($url, false, $streamContext);
+			if (FALSE === $result) {
+				//throw new Exception(curl_error($ch), curl_errno($ch));
+                //$errorMsg = sprintf("Curl_ERROR :: %s [%s]", curl_error($ch), curl_errno($ch));
+                $errorMsg = sprintf('{ "ERROR" : "curl_exec > %s [%s]" }', curl_error($ch), curl_errno($ch));   
 
-        if ($json === false) {
+            } else {
+
+                if($httpStatusCode == 200) {	
+                    SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
+                    SetValue($this->GetIDForIdent("receiveCnt"), GetValue($this->GetIDForIdent("receiveCnt")) + 1);  											
+                    SetValue($this->GetIDForIdent("LastDataReceived"), time()); 
+                } else {
+                    //$errorMsg = sprintf("Curl_WARN :: httpStatusCode >%s< [%s]", $httpStatusCode, $url);
+                    $errorMsg = sprintf('{ "ERROR" : "httpStatusCode >%s< [%s]" }', $httpStatusCode, $url);
+                }		
+
+            }		
+
+		} catch(Exception $e) {
+
+            //$errorMsg = sprintf("Curl_Exception: %s [%s]", $e->getMessage(), $e->getCode());
+            $errorMsg = sprintf('{ "ERROR" : "Exception > %s [%s]" }', $e->getMessage(), $e->getCode());
+
+		} finally {
+
+			curl_close($ch);
+
+            if(!is_null($errorMsg)) {
+
+                SetValue($this->GetIDForIdent("skipAutoUpdate"), true);
+                SetValue($this->GetIDForIdent("ErrorCnt"), GetValue($this->GetIDForIdent("ErrorCnt")) + 1); 
+                SetValue($this->GetIDForIdent("LastError"), $errorMsg);
+    
+                if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $errorMsg, 0); }
+                $logSender = sprintf("%s [%s]", IPS_GetName($this->InstanceID), ($this->InstanceID));
+                IPS_LogMessage($logSender, $errorMsg);
+                //die();
+                $result = $errorMsg; 
+            }
+
+		}
+        
+        $duration = round($this->CalcDuration_ms($timeStart), 1);
+        
+        if($duration > 600) {
+            SetValue($this->GetIDForIdent("processingTimeLog"), sprintf("API Response: %s [%s ms]",  $url, $duration)); 
+        }
+		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
+        
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]",  $result, $duration), 0); }   
+        
+        $responseInfo =  sprintf("%s [%s ms] >> %s\r\n", $url, $duration, $result);
+        if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, $responseInfo, 0); }   
+        //echo $responseInfo;
+
+        return $result;			
+	}
+
+
+
+
+
+
+    protected function CallRestAPI($url) {
+
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, "API Request: " . $url, 0); }        
+        SetValue($this->GetIDForIdent("requestCnt"), GetValue($this->GetIDForIdent("requestCnt")) + 1); 
+        
+        $timeStart = microtime(true);
+
+        $result = @file_get_contents($url, false);
+
+        //$streamContext = stream_context_create( array('http'=> array('timeout' => 3) ) );   //5 seconds Timeout
+        //$result = @file_get_contents($url, false, $streamContext);
+
+        $duration = $this->CalcDuration_ms($timeStart);
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]", $result, $duration), 0); }   
+		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
+
+        if ($result === false) {
             $error = error_get_last();
             $errorMsg = implode (" | ", $error);
+            SetValue($this->GetIDForIdent("skipAutoUpdate"), true);
             SetValue($this->GetIDForIdent("ErrorCnt"), GetValue($this->GetIDForIdent("ErrorCnt")) + 1); 
             SetValue($this->GetIDForIdent("LastError"), $errorMsg);
 
@@ -43,16 +156,19 @@ trait SYR_FunctionLib {
             if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $logMsg, 0); }
             $logSender = sprintf("%s [%s]", IPS_GetName($this->InstanceID), ($this->InstanceID));
             IPS_LogMessage($logSender, $logMsg);
-            die();
+            //die();
+            $result = '{ "ERROR": "HTTP request failed" }';
+
         } else {
+            SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
             SetValue($this->GetIDForIdent("receiveCnt"), GetValue($this->GetIDForIdent("receiveCnt")) + 1);  											
             SetValue($this->GetIDForIdent("LastDataReceived"), time()); 
         }
-        return json_decode($json);
+        return $result;
     }
 
     protected function CalcDuration_ms(float $timeStart) {
-        $duration =  microtime(true)- $timeStart;
+        $duration =  microtime(true) - $timeStart;
         return round($duration*1000,2);
     }	
 

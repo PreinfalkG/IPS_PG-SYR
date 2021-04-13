@@ -87,7 +87,7 @@
                 {
                     "name": "cb_UpdataCND",
                     "type": "CheckBox",
-                    "caption": "Leitwertsensor [CNC]"
+                    "caption": "Leitwertsensor [CND]"
                 },
                 {
                     "name": "cb_UpdateAVO",
