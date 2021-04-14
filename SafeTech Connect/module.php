@@ -5,6 +5,7 @@ require_once("FunctionLib.php");
 include_once("CommandSetConfig.php");
 
 const SKIP_AutoUpdate_Duration = 600;
+const RESET_UpdateInProcess_Duration = 240;
 
 class SafeTechConnect extends IPSModule {
 
@@ -28,6 +29,7 @@ class SafeTechConnect extends IPSModule {
 		$this->parentRootId = IPS_GetParent($this->InstanceID);
 		$this->archivInstanzID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
 
+		$this->UpdateInProcess = false;
 		$this->apiUserLevel = 0;
 		$this->commandSetConfigArr = $this->GetCommandSetConfigArr();
 
@@ -66,6 +68,12 @@ class SafeTechConnect extends IPSModule {
 		$this->RegisterPropertyBoolean("cb_UpdateBAT", false);
 		$this->RegisterPropertyBoolean("cb_UpdateNET", false);
 		$this->RegisterPropertyBoolean("cb_UpdateALA", false);
+
+		$this->RegisterPropertyBoolean("cb_UpdateGroupAlarm", false);
+		$this->RegisterPropertyBoolean("cb_UpdateGroupMeasurements", false);
+		$this->RegisterPropertyBoolean("cb_UpdateGroupProfile", false);
+		$this->RegisterPropertyBoolean("cb_UpdateGroupNetwork", false);
+		$this->RegisterPropertyBoolean("cb_UpdateGroupSettings", false);						
 
 		$this->RegisterTimer('Timer_AutoUpdate', 0, 'STC_Timer_AutoUpdate($_IPS["TARGET"]);');
 
@@ -154,6 +162,12 @@ class SafeTechConnect extends IPSModule {
 			if($this->ReadPropertyBoolean("cb_UpdateNET"))		{ $this->Update("NET"); }
 			if($this->ReadPropertyBoolean("cb_UpdateALA"))		{ $this->Update("ALA"); }
 
+			if($this->ReadPropertyBoolean("cb_UpdateGroupAlarm"))			{ $this->UpdateGroup("Alarm"); }
+			if($this->ReadPropertyBoolean("cb_UpdateGroupMeasurements"))	{ $this->UpdateGroup("Measurements"); }
+			if($this->ReadPropertyBoolean("cb_UpdateGroupProfile"))			{ $this->UpdateGroup("Profile"); }
+			if($this->ReadPropertyBoolean("cb_UpdateGroupNetwork"))			{ $this->UpdateGroup("Network"); }
+			if($this->ReadPropertyBoolean("cb_UpdateGroupSettings"))		{ $this->UpdateGroup("Settings"); }
+
 			$duration = $this->CalcDuration_ms($start_Time);
 			SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
 
@@ -178,34 +192,36 @@ class SafeTechConnect extends IPSModule {
 
 	public function UpdateGroup(string $groupNameToUpdate) { 
 
-		SetValue($this->GetIDForIdent("requestCnt"), 0);
-		SetValue($this->GetIDForIdent("receiveCnt"), 0);
-		SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
-		SetValue($this->GetIDForIdent("updateSkipCnt"), 0);
-		SetValue($this->GetIDForIdent("ErrorCnt"), 0); 
-		SetValue($this->GetIDForIdent("LastError"), "-"); 
-		SetValue($this->GetIDForIdent("instanzInactivCnt"), 0); 
-		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), 0); 
-		SetValue($this->GetIDForIdent("LastDataReceived"), 0); 
+		$updateInProcess = GetValue($this->GetIDForIdent("updateInProcess"));
+		if($updateInProcess) {
 
-		$timeStart = microtime(true);
-		$cnt=0;
-		foreach($this->commandSetConfigArr as $key=>$configArrElem) {
-			$name = $configArrElem[ConfigArrOffset_Name];
-			$groupId = $configArrElem[ConfigArrOffset_GroupId];
-			$groupName = $configArrElem[ConfigArrOffset_GroupName];
+			$lastChanged  = time() - round(IPS_GetVariable($this->GetIDForIdent("updateInProcess"))["VariableChanged"]);
+			if ($lastChanged >= RESET_UpdateInProcess_Duration) {
+				SetValue($this->GetIDForIdent("updateInProcess"), false);
+			}
 
-			//echo $groupNameToUpdate . " " . $groupName . "\r\n";
-			if(($groupNameToUpdate == "ALL") OR ($groupNameToUpdate == $groupName)) {
-				if($groupId > 0) {
-					$cnt++;
-					set_time_limit(15);
-					$this->GetAndUpdateVariable($key, true);
-					IPS_Sleep(50);
+		} else {
+			SetValue($this->GetIDForIdent("updateInProcess"), true);
+			$timeStart = microtime(true);
+			$cnt=0;
+			foreach($this->commandSetConfigArr as $key=>$configArrElem) {
+				$name = $configArrElem[ConfigArrOffset_Name];
+				$groupId = $configArrElem[ConfigArrOffset_GroupId];
+				$groupName = $configArrElem[ConfigArrOffset_GroupName];
+
+				//echo $groupNameToUpdate . " " . $groupName . "\r\n";
+				if(($groupNameToUpdate == "ALL") OR ($groupNameToUpdate == $groupName)) {
+					if($groupId > 0) {
+						$cnt++;
+						set_time_limit(15);
+						$this->GetAndUpdateVariable($key, true);
+						IPS_Sleep(40);
+					}
 				}
 			}
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, sprintf("Update DONE for %d Parameters [%s ms]. ErrorCnt = %d",  $cnt, $this->CalcDuration_ms($timeStart), $this->ErrorCnt), 0);  }
+			SetValue($this->GetIDForIdent("updateInProcess"), false);
 		}
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, sprintf("Update DONE for %d Parameters [%s ms]. ErrorCnt = %d",  $cnt, $this->CalcDuration_ms($timeStart), $this->ErrorCnt), 0);  }
 	}
 
 	public function UpdateGroups(array $arrGroupIds) { 
@@ -411,6 +427,7 @@ class SafeTechConnect extends IPSModule {
 		
 		SetValue($this->GetIDForIdent("requestCnt"), 0);
 		SetValue($this->GetIDForIdent("receiveCnt"), 0);
+		SetValue($this->GetIDForIdent("updateInProcess"), false);
 		SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
 		SetValue($this->GetIDForIdent("updateSkipCnt"), 0);
 		SetValue($this->GetIDForIdent("grantAdminRightsCnt"), 0); 
@@ -718,7 +735,10 @@ class SafeTechConnect extends IPSModule {
 
 		IPS_SetHidden($this->RegisterVariableInteger("requestCnt", "Request Cnt", "", 900), true);
 		IPS_SetHidden($this->RegisterVariableInteger("receiveCnt", "Receive Cnt", "", 901), true);
+
+		IPS_SetHidden($this->RegisterVariableBoolean("updateInProcess", "Update In Process", "", 905), true);
 		IPS_SetHidden($this->RegisterVariableBoolean("skipAutoUpdate", "Skip Auto Update", "", 910), true);
+
 		IPS_SetHidden($this->RegisterVariableInteger("updateSkipCnt", "Update Skip Cnt", "", 911), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("grantAdminRightsCnt", "Grant Admin Rights Cnt", "", 912), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("ErrorCnt", "Error Cnt", "", 920), true);

@@ -133,7 +133,32 @@
                     "name": "cb_UpdateALA",
                     "type": "CheckBox",
                     "caption": "Aktuller Alarm / Ongoing Alarm [ALA]"
-                }                           
+                },
+                {
+                    "name": "cb_UpdateGroupAlarm",
+                    "type": "CheckBox",
+                    "caption": "GRUPPE 'Alarm'"
+                },
+                {
+                    "name": "cb_UpdateGroupMeasurements",
+                    "type": "CheckBox",
+                    "caption": "GRUPPE 'Measurements'"
+                },
+                {
+                    "name": "cb_UpdateGroupProfile",
+                    "type": "CheckBox",
+                    "caption": "GRUPPE 'Profile'"
+                },
+                {
+                    "name": "cb_UpdateGroupNetwork",
+                    "type": "CheckBox",
+                    "caption": "GRUPPE 'Network'"
+                },
+                {
+                    "name": "cb_UpdateGroupSettings",
+                    "type": "CheckBox",
+                    "caption": "GRUPPE 'Settings'"
+                }                            
             ]
         }
     ],
