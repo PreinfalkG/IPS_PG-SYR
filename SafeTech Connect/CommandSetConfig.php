@@ -1,6 +1,5 @@
 <?
 
-
 // ConfigArrayOffset
 if (!defined('ConfigArrOffset_Name'))
 {
@@ -15,8 +14,6 @@ if (!defined('ConfigArrOffset_Name'))
     define("ConfigArrOffset_VarEnabelAC", 8);
     define("ConfigArrOffset_Description", 9);
 }
-
-
 
 trait SafeTech_CommandSet {
 
@@ -49,15 +46,15 @@ trait SafeTech_CommandSet {
         $configArr["PB2"]    = array("Profile 2 Buzzer ON", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		128,	"SYR.DisabledEnabled",		false,	"0 Disabled | 1 Enabled");
         $configArr["PW2"]    = array("Profile 2 Leakage Warning ON",			"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		129,	"SYR.DisabledEnabled",		false,	"0 Disabled | 1 Enabled");
                     
-        $configArr["TMP"]    = array("Leakage Protection Temporary Deactivation", "USER",   100,   "Settings",     VARIABLE::TYPE_INTEGER,  1,      90,    "SYR.TMP",                    false,  "0 temporary deactivation disabled | > 0 deactivated for n seconds");
+        $configArr["TMP"]    = array("Leakage Protection Temporary Deactivation", "USER",   100,   "Settings",     VARIABLE::TYPE_INTEGER,  1,      90,    "SYR.TMP",                   false,  "0 temporary deactivation disabled | > 0 deactivated for n seconds");
                     
         $configArr["LNG"]    = array("Language",								"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.Language",				false,	"0 DE | 1 EN | 2 ES | 3 IT | 4 PL");
         $configArr["UNI"]    = array("Units",									"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		101,	"SYR.Units",				false,	"0 °C/bar/Liter | 1 °F/psi/US.liq.gal");
         $configArr["T2"]     = array("Max Flow Leakage Time",					"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		102,	"SYR.Minute",				false,	"0...99min");
-        $configArr["BSA"]    = array("Floor Sensor",							"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		103,	"SYR.DisabledEnabled",					false,	"0 Disabled | 1 Enabled");
+        $configArr["BSA"]    = array("Floor Sensor",							"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		103,	"SYR.DisabledEnabled",		false,	"0 Disabled | 1 Enabled");
         $configArr["DMA"]    = array("Micro-Leakage-Test",						"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		104,	"SYR.DMA",					false,	"0 Disabled | 1 Warning | 2 Shutoff");
         $configArr["DRP"]    = array("Micro-Leakage-Test period",				"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		105,	"SYR.DRP",					false,	"0 Always | 1 Day | 2 Week | 3 Month");
-        $configArr["BUZ"]    = array("Buzzer on alarm",							"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		106,	"SYR.DisabledEnabled",					false,	"0 Disabled | 1 Enabled");
+        $configArr["BUZ"]    = array("Buzzer on alarm",							"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		106,	"SYR.DisabledEnabled",		false,	"0 Disabled | 1 Enabled");
         $configArr["CNL"]    = array("Conductivity Limit",						"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		107,	"SYR.CNL",					false,	"Maximum water conductivity value Conductivity alarm if exceeded 0 Disabled | 1...5000 uS/cm");
         $configArr["CNF"]    = array("Conductivity Factor",						"USER",		100,	"Settings",		VARIABLE::TYPE_FLOAT,	 0.1,	108,	"",					        false,	"Multiplier of conductivity value 0.5...5");
         $configArr["LWT"]    = array("Leakage warning threshold",				"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		109,	"SYR.Percent",				false,	"80...99 %");
@@ -96,6 +93,7 @@ trait SafeTech_CommandSet {
         $configArr["MRT"]    = array("MQTT Reconnect Time",						"SERVICE",	100,	"Network",		VARIABLE::TYPE_INTEGER,	 1,		112,	"SYR.MRT",					false,	"0 disabled (default time 7h) 1...60min :: MQTT reconnect time if was disconnected");
                 
         $configArr["ALA"]    = array("Ongoing Alarm",							"USER",		100,	"Alarm",		VARIABLE::TYPE_STRING,	 1,		300,	"",				        	false,	"Gets current alarm, FF- no alarm, A1...AB see below");
+        $configArr["ALAi"]   = array("Ongoing Alarm",							"USER",		-99,	"Alarm",		VARIABLE::TYPE_INTEGER,	 1,		300,	"SYR.AlarmCodes",		   	false,	"Gets current alarm, FF- no alarm, A1...AB see below");
         $configArr["VLV"]    = array("Current Valve Status",					"SERVICE",	100,	"Alarm",		VARIABLE::TYPE_INTEGER,	 1,		300,	"SYR.VLV",					false,	"10 Closed | 11 Closing | 20 Open | 21 Opening | 30 Undefined");
         $configArr["ALM"]    = array("Alarm Memory",							"SERVICE",	100,	"Alarm",		VARIABLE::TYPE_STRING,	 1,		300,	"",				        	false,	"Get alarm memory (eight alarms) with '->' before current alarm, FF = empty");
                 
@@ -138,9 +136,7 @@ trait SafeTech_CommandSet {
         $configArr["PAH"]    = array("Parameters history file", 				"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		501,	"",				        	false,	"Last 0 ... 100 entries in CSV format");
         $configArr["STH"]    = array("Statistics history file", 				"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		502,	"",				        	false,	"Last 0 ... 100 entries in CSV format");
                 
-        $configArr["SFV"]    = array("Firmware check", 							"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		510,	"SYR.SFV",					false,	"0 – new firmware not available | 1 – new firmware available (Checked at startup and every 6h)");
-
-                
+        $configArr["SFV"]    = array("Firmware check", 							"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		510,	"SYR.SFV",					false,	"0 – new firmware not available | 1 – new firmware available (Checked at startup and every 6h)");         
 	
         return $configArr;
 

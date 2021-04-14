@@ -16,6 +16,7 @@ class SafeTechConnect extends IPSModule {
 	private $archivInstanzID;
 
 	private $baseApiURL;
+	private $apiUserLevel;
 	private $commandSetConfigArr;
 
 	private $ErrorCnt = 0;
@@ -27,6 +28,7 @@ class SafeTechConnect extends IPSModule {
 		$this->parentRootId = IPS_GetParent($this->InstanceID);
 		$this->archivInstanzID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
 
+		$this->apiUserLevel = 0;
 		$this->commandSetConfigArr = $this->GetCommandSetConfigArr();
 
 		$currentStatus = $this->GetStatus();
@@ -52,15 +54,18 @@ class SafeTechConnect extends IPSModule {
 		$this->RegisterPropertyInteger("LogLevel", 4);
 		$this->RegisterPropertyBoolean('AutoUpdate', false);
 		$this->RegisterPropertyInteger("UpdateInterval", 30);		
-		//$this->RegisterPropertyInteger("UpdateIntervalUnit", 30);	
 
 		$this->RegisterPropertyBoolean("cb_UpdateAB", false);
-		$this->RegisterPropertyBoolean("cb_UpdataCND", false);
-		$this->RegisterPropertyBoolean("cb_UpdateAVO", false);
+		$this->RegisterPropertyBoolean("cb_UpdataCEL", false);
+		$this->RegisterPropertyBoolean("cb_UpdateBAR", false);
+		$this->RegisterPropertyBoolean("cb_UpdateCND", false);
+		$this->RegisterPropertyBoolean("cb_UpdateFLO", false);
+		$this->RegisterPropertyBoolean("cb_UpdateLTV", false);
 		$this->RegisterPropertyBoolean("cb_UpdateVOL", false);
-		$this->RegisterPropertyBoolean("cb_UpdatePRF", false);
-		$this->RegisterPropertyBoolean("cb_UpdatePV1", false);
-		$this->RegisterPropertyBoolean("cb_UpdatePV2", false);
+		$this->RegisterPropertyBoolean("cb_UpdateAVO", false);
+		$this->RegisterPropertyBoolean("cb_UpdateBAT", false);
+		$this->RegisterPropertyBoolean("cb_UpdateNET", false);
+		$this->RegisterPropertyBoolean("cb_UpdateALA", false);
 
 		$this->RegisterTimer('Timer_AutoUpdate', 0, 'STC_Timer_AutoUpdate($_IPS["TARGET"]);');
 
@@ -137,13 +142,17 @@ class SafeTechConnect extends IPSModule {
 		
 			$start_Time = microtime(true);
 
-			if($this->ReadPropertyBoolean("cb_UpdateAB")) 		{ $this->GetAB(); }
-			if($this->ReadPropertyBoolean("cb_UpdataCND")) 		{ $this->GetCND(); }
-			if($this->ReadPropertyBoolean("cb_UpdateAVO")) 		{ $this->GetAVO(); }
-			if($this->ReadPropertyBoolean("cb_UpdateVOL")) 		{ $this->GetVOL(); }
-			if($this->ReadPropertyBoolean("cb_UpdatePRF")) 		{ $this->GetPRF(); }
-			if($this->ReadPropertyBoolean("cb_UpdatePV1"))		{ $this->GetPV1(); }
-			if($this->ReadPropertyBoolean("cb_UpdatePV2"))		{ $this->GetPV2(); }
+			if($this->ReadPropertyBoolean("cb_UpdateAB")) 		{ $this->Update("AB"); }
+			if($this->ReadPropertyBoolean("cb_UpdataCEL")) 		{ $this->Update("CEL"); }
+			if($this->ReadPropertyBoolean("cb_UpdateBAR")) 		{ $this->Update("BAR"); }
+			if($this->ReadPropertyBoolean("cb_UpdateCND")) 		{ $this->Update("CND"); }
+			if($this->ReadPropertyBoolean("cb_UpdateFLO")) 		{ $this->Update("FLO"); }
+			if($this->ReadPropertyBoolean("cb_UpdateLTV"))		{ $this->Update("LTV"); }
+			if($this->ReadPropertyBoolean("cb_UpdateVOL"))		{ $this->Update("VOL"); }
+			if($this->ReadPropertyBoolean("cb_UpdateAVO")) 		{ $this->Update("AVO"); }
+			if($this->ReadPropertyBoolean("cb_UpdateBAT")) 		{ $this->Update("BAT"); }
+			if($this->ReadPropertyBoolean("cb_UpdateNET"))		{ $this->Update("NET"); }
+			if($this->ReadPropertyBoolean("cb_UpdateALA"))		{ $this->Update("ALA"); }
 
 			$duration = $this->CalcDuration_ms($start_Time);
 			SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
@@ -155,10 +164,15 @@ class SafeTechConnect extends IPSModule {
 
 	}
 
+	public function UpdateAB() {
+		$this->Update("AB");
+	}
+
+
+
 	public function Get($key) {
 		$this->GetAndUpdateVariable($key, false);
 	}
-
 
 	public function Update($key) {
 		$this->GetAndUpdateVariable($key, true);
@@ -252,8 +266,20 @@ class SafeTechConnect extends IPSModule {
 			
 			//$apiResponse = $this->CallRestAPI($apiURL);	
 			$apiResponse = $this->CurlGet($apiURL);	
-
 			if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, $apiResponse, 0); }
+
+
+			if (strpos($apiResponse, "ERROR: ADM") !== false) {
+
+				if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Need higher API Rights > Request 'FACTORY/(ADMIN) Rights ...", 0); }
+				$this->SetApiUserLevel(2);
+				SetValue($this->GetIDForIdent("grantAdminRightsCnt"), GetValue($this->GetIDForIdent("grantAdminRightsCnt")) + 1); 
+
+				$apiResponse = $this->CurlGet($apiURL);	
+				if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, $apiResponse, 0); }
+
+			}
+
 
 			if (strpos($apiResponse, "ERROR") !== false) {
 				//if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR :: Response for Request '%s' is '%s'", $key, $apiValue), 0); }
@@ -290,6 +316,9 @@ class SafeTechConnect extends IPSModule {
 
 					if($updateVariable) {
 						$this->UpdateVariable($key, $returnValue, $configArrElem);
+						if($key == "ALA") {
+							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
+						}
 					}
 
 				} else {
@@ -390,12 +419,16 @@ class SafeTechConnect extends IPSModule {
 		SetValue($this->GetIDForIdent("receiveCnt"), 0);
 		SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
 		SetValue($this->GetIDForIdent("updateSkipCnt"), 0);
+		SetValue($this->GetIDForIdent("grantAdminRightsCnt"), 0); 
 		SetValue($this->GetIDForIdent("ErrorCnt"), 0); 
 		SetValue($this->GetIDForIdent("LastError"), "-"); 
 		SetValue($this->GetIDForIdent("instanzInactivCnt"), 0); 
 		SetValue($this->GetIDForIdent("processingTimeLog"), "-"); 
 		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), 0); 
 		SetValue($this->GetIDForIdent("LastDataReceived"), 0); 
+
+
+		
 
 	}
 
@@ -660,6 +693,30 @@ class SafeTechConnect extends IPSModule {
         }	
 
 
+		if ( !IPS_VariableProfileExists('SYR.AlarmCodes') ) {
+            IPS_CreateVariableProfile('SYR.AlarmCodes', VARIABLE::TYPE_INTEGER);
+            IPS_SetVariableProfileText('SYR.AlarmCodes', "", "" );
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 160, "[%d] unknown", "", -1);
+            IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 161, "ALARM END SWITCH [A1 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 162, "NO NETWORK [A2 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 163, "ALARM VOLUME LEAKAGE [A3 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 164, "ALARM TIME LEAKAGE [A4 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 165, "ALARM MAX FLOW LEAKAGE [A5 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 166, "ALARM MICRO LEAKAGE [A6 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 167, "ALARM EXT. SENSOR LEAKAGE [A7 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 168, "ALARM TURBINE BLOCKED [A8 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 169, "ALARM PRESSURE SENSOR ERROR [A9 - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 170, "ALARM TEMPERATURE SENSOR ERROR [AA - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 171, "ALARM CONDUCTIVITY SENSOR ERROR [AB - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 172, "ALARM TO HIGH CONDUCTIVITY [AC - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 173, "LOW BATTERY [AD - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 174, "WARNING VOLUME LEAKAGE [AE - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 175, "ALARM NO POWER SUPPLY [AF - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 254, "[%d] unknown", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 255, "NO ALARM [FF - %d]", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 256, "[%d] unknown", "", -1);
+
+        }	
 
 	}
 
@@ -669,6 +726,7 @@ class SafeTechConnect extends IPSModule {
 		IPS_SetHidden($this->RegisterVariableInteger("receiveCnt", "Receive Cnt", "", 901), true);
 		IPS_SetHidden($this->RegisterVariableBoolean("skipAutoUpdate", "Skip Auto Update", "", 910), true);
 		IPS_SetHidden($this->RegisterVariableInteger("updateSkipCnt", "Update Skip Cnt", "", 911), true);	
+		IPS_SetHidden($this->RegisterVariableInteger("grantAdminRightsCnt", "Grant Admin Rights Cnt", "", 912), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("ErrorCnt", "Error Cnt", "", 920), true);
 		IPS_SetHidden($this->RegisterVariableString("LastError", "Last Error", "", 921), true);
 		IPS_SetHidden($this->RegisterVariableInteger("instanzInactivCnt", "Instanz Inactiv Cnt", "", 930), true);
@@ -676,8 +734,8 @@ class SafeTechConnect extends IPSModule {
 		IPS_SetHidden($this->RegisterVariableFloat("lastProcessingTotalDuration", "Last Processing Duration [ms]", "", 940), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("LastDataReceived", "Last Data Received", "~UnixTimestamp", 941), false);
 
-		$scriptScr = sprintf("<?php STC_Update(%s); ?>",$this->InstanceID);
-		$this->RegisterScript("UpdateScript", "Update", $scriptScr, 990);
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Measurement'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update Group 'Measurement'", $scriptScr, 990);
 
 		IPS_ApplyChanges($this->archivInstanzID);
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }

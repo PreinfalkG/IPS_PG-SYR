@@ -82,91 +82,165 @@
                 {
                     "name": "cb_UpdateAB",
                     "type": "CheckBox",
-                    "caption": "Absperrung [AB]"
+                    "caption": "Absperrung / Shutoff [AB]"
                 },                         
                 {
-                    "name": "cb_UpdataCND",
+                    "name": "cb_UpdataCEL",
                     "type": "CheckBox",
-                    "caption": "Leitwertsensor [CND]"
+                    "caption": "Temperature / Temperatursensor [CEL]"
                 },
                 {
-                    "name": "cb_UpdateAVO",
+                    "name": "cb_UpdateBAR",
                     "type": "CheckBox",
-                    "caption": "Aktuell geflossenes Volumen [AVO]"
+                    "caption": "Pressure / Drucksensor [BAR]"
+                },
+                {
+                    "name": "cb_UpdateCND",
+                    "type": "CheckBox",
+                    "caption": "Conductivity / Leitwertsensor [CND]"
+                },
+                {
+                    "name": "cb_UpdateFLO",
+                    "type": "CheckBox",
+                    "caption": "Water Flow / Wasserdurchfluss [FLO]"
+                },
+                {
+                    "name": "cb_UpdateLTV",
+                    "type": "CheckBox",
+                    "caption": "Last Tapped Volume / zuletzt gezapfte Wassermenge [LTV]"
                 },
                 {
                     "name": "cb_UpdateVOL",
                     "type": "CheckBox",
-                    "caption": "Gesamtvolumen [VOL]"
+                    "caption": "Cumulative Water Volume / Kumulierte Wassermenge [VOL]"
                 },
                 {
-                    "name": "cb_UpdatePRF",
+                    "name": "cb_UpdateAVO",
                     "type": "CheckBox",
-                    "caption": "aktives Profil [PRF]"
+                    "caption": "Volumen des aktuellen Verbrauchsprozesses / Volume of the current consumption process [AVO]"
                 },
                 {
-                    "name": "cb_UpdatePV1",
+                    "name": "cb_UpdateBAT",
                     "type": "CheckBox",
-                    "caption": "Leckagestufe Profil 1 [PV1]"
+                    "caption": "Battery voltage [BAT]"
                 },
                 {
-                    "name": "cb_UpdatePV2",
+                    "name": "cb_UpdateNET",
                     "type": "CheckBox",
-                    "caption": "Leckagestufe Profil 2 [PV2]"
-                }                               
+                    "caption": "DC voltage (power adaptor) [NET]"
+                },
+                {
+                    "name": "cb_UpdateALA",
+                    "type": "CheckBox",
+                    "caption": "Aktuller Alarm / Ongoing Alarm [ALA]"
+                }                           
             ]
         }
     ],
     "actions": [
         {
             "type": "ExpansionPanel",
-            "caption": "Manual Updates",
+            "caption": "Manual Updates - Single Value",
             "expanded": false,
             "visible": true,
             "items": [
                 {
                     "type": "Button",
-                    "caption": "Absperrung [AB]",
-                    "onClick": "STC_UpdateAB($id);"
-                },                 
+                    "caption": "Absperrung / Shutoff [AB]",
+                    "onClick": "STC_Update($id, 'AB');"
+                },  
                 {
                     "type": "Button",
-                    "caption": "Leitwertsensor [CND]",
-                    "onClick": "STC_UpdateCND($id);"
+                    "caption": "Temperature / Temperatursensor [CEL]",
+                    "onClick": "STC_Update($id, 'CEL');"
+                },       
+                {
+                    "type": "Button",
+                    "caption": "Pressure / Drucksensor [BAR]",
+                    "onClick": "STC_Update($id, 'BAR');"
                 },   
                 {
                     "type": "Button",
-                    "caption": "Aktuell geflossenes Volumen [AVO]",
-                    "onClick": "STC_UpdateAVO($id);"
+                    "caption": "Conductivity / Leitwertsensor [CND]",
+                    "onClick": "STC_Update($id, 'CND');"
+                },                                                              
+                {
+                    "type": "Button",
+                    "caption": "Water Flow / Wasserdurchfluss [FLO]",
+                    "onClick": "STC_Update($id, 'FLO');"
+                },   
+                {
+                    "type": "Button",
+                    "caption": "Last Tapped Volume / zuletzt gezapfte Wassermenge [LTV]",
+                    "onClick": "STC_Update($id, 'LTV');"
                 },    
                 {
                     "type": "Button",
-                    "caption": "Gesamtvolumen [VOL]",
-                    "onClick": "STC_UpdateVOL($id);"
+                    "caption": "Cumulative Water Volume / Kumulierte Wassermenge [VOL]",
+                    "onClick": "STC_Update($id, 'VOL');"
                 },    
                 {
                     "type": "Button",
-                    "caption": "aktives Profil [PRF]",
-                    "onClick": "STC_UpdatePRF($id);"
-                },    
+                    "caption": "Volumen des aktuellen Verbrauchsprozesses / Volume of the current consumption process [AVO]",
+                    "onClick": "STC_Update($id, 'AVO');"
+                },  
                 {
                     "type": "Button",
-                    "caption": "Leckagestufe Profil 1 [PV1]",
-                    "onClick": "STC_UpdatePV1($id);"
-                },    
+                    "caption": "Battery voltage [BAT]",
+                    "onClick": "STC_Update($id, 'BAT');"
+                },
                 {
                     "type": "Button",
-                    "caption": "Leckagestufe Profil 2 [PV2]",
-                    "onClick": "STC_UpdatePV2($id);"
-                },    
+                    "caption": "DC voltage (power adaptor) [NET]",
+                    "onClick": "STC_Update($id, 'NET');"
+                },
                 {
                     "type": "Button",
-                    "caption": "Update Enabled",
-                    "onClick": "STC_Update($id);"
-                }                             
+                    "caption": "Aktuller Alarm / Ongoing Alarm [ALA]",
+                    "onClick": "STC_Update($id, 'ALA');"
+                }
             ]
         },        
         
+        {
+            "type": "ExpansionPanel",
+            "caption": "Manual Updates - Group",
+            "expanded": false,
+            "visible": true,
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "ALL",
+                    "onClick": "STC_UpdateGroup($id, 'ALL');"
+                },  
+                {
+                    "type": "Button",
+                    "caption": "Alarm",
+                    "onClick": "STC_UpdateGroup($id, 'Alarm');"
+                },       
+                {
+                    "type": "Button",
+                    "caption": "Measurements",
+                    "onClick": "STC_UpdateGroup($id, 'Measurement');"
+                },   
+                {
+                    "type": "Button",
+                    "caption": "Profile",
+                    "onClick": "STC_UpdateGroup($id, 'Profile');"
+                },                                                              
+                {
+                    "type": "Button",
+                    "caption": "Network",
+                    "onClick": "STC_UpdateGroup($id, 'Network');"
+                },   
+                {
+                    "type": "Button",
+                    "caption": "Settings",
+                    "onClick": "STC_UpdateGroup($id, 'Settings');"
+                }
+            ]
+        },      
+
         {
             "type": "ExpansionPanel",
             "caption": "Reset and Delete Funkctions",
