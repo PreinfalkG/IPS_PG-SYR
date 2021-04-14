@@ -164,17 +164,11 @@ class SafeTechConnect extends IPSModule {
 
 	}
 
-	public function UpdateAB() {
-		$this->Update("AB");
-	}
-
-
-
-	public function Get($key) {
+	public function Get(string $key) {
 		$this->GetAndUpdateVariable($key, false);
 	}
 
-	public function Update($key) {
+	public function Update(string $key) {
 		$this->GetAndUpdateVariable($key, true);
 	}
 
@@ -182,7 +176,7 @@ class SafeTechConnect extends IPSModule {
 		$this->UpdateGroup("ALL");
 	}
 
-	public function UpdateGroup($groupNameToUpdate) { 
+	public function UpdateGroup(string $groupNameToUpdate) { 
 
 		SetValue($this->GetIDForIdent("requestCnt"), 0);
 		SetValue($this->GetIDForIdent("receiveCnt"), 0);
@@ -214,7 +208,7 @@ class SafeTechConnect extends IPSModule {
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, sprintf("Update DONE for %d Parameters [%s ms]. ErrorCnt = %d",  $cnt, $this->CalcDuration_ms($timeStart), $this->ErrorCnt), 0);  }
 	}
 
-	public function UpdateGroups($arrGroupIds) { 
+	public function UpdateGroups(array $arrGroupIds) { 
 
 		SetValue($this->GetIDForIdent("requestCnt"), 0);
 		SetValue($this->GetIDForIdent("receiveCnt"), 0);
@@ -383,7 +377,7 @@ class SafeTechConnect extends IPSModule {
     
     }
 
-	public function SetApiUserLevel($level = 0) {
+	public function SetApiUserLevel(int $level = 0) {
 		//0 = USER (Standard)	> clr/adm
 		//1 = SERVICE			> set/adm/(1)
 		//2 = FACTORY (ADMIN)	> set/adm/(2)f
