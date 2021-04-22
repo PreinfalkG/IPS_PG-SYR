@@ -1,4 +1,4 @@
-# Symcon SYR SafeTech Connect Modul
+# IP-Symcon SYR SafeTech Connect Modul
 Modul um ein SYR SafeTech Connect Gerät via REST API lokal auszulesen.
 
 
