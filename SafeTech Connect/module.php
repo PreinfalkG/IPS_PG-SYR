@@ -438,9 +438,6 @@ class SafeTechConnect extends IPSModule {
 		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), 0); 
 		SetValue($this->GetIDForIdent("LastDataReceived"), 0); 
 
-
-		
-
 	}
 
 
