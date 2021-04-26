@@ -308,6 +308,7 @@ class SafeTechConnect extends IPSModule {
 							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Boolean |%s|", $apiValue, $returnValue), 0); }
 							break;
 						case VARIABLE::TYPE_INTEGER:
+							$apiValue = preg_replace('~\D~', '', $apiValue);
 							$returnValue = intval($apiValue);
 							$returnValue = $returnValue * $configArrElem[ConfigArrOffset_Multiplikator];
 							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Integer |%s|", $apiValue, $returnValue), 0); }
