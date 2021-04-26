@@ -163,7 +163,7 @@ class SafeTechConnect extends IPSModule {
 			if($this->ReadPropertyBoolean("cb_UpdateALA"))		{ $this->Update("ALA"); }
 
 			if($this->ReadPropertyBoolean("cb_UpdateGroupAlarm"))			{ $this->UpdateGroup("Alarm"); }
-			if($this->ReadPropertyBoolean("cb_UpdateGroupMeasurements"))	{ $this->UpdateGroup("Measurements"); }
+			if($this->ReadPropertyBoolean("cb_UpdateGroupMeasurements"))	{ $this->UpdateGroup("Measurement"); }
 			if($this->ReadPropertyBoolean("cb_UpdateGroupProfile"))			{ $this->UpdateGroup("Profile"); }
 			if($this->ReadPropertyBoolean("cb_UpdateGroupNetwork"))			{ $this->UpdateGroup("Network"); }
 			if($this->ReadPropertyBoolean("cb_UpdateGroupSettings"))		{ $this->UpdateGroup("Settings"); }
