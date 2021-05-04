@@ -329,6 +329,8 @@ class SafeTechConnect extends IPSModule {
 						$this->UpdateVariable($key, $returnValue, $configArrElem);
 						if($key == "ALA") {
 							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
+						} else if ($key == "AVO") {
+							$this->UpdateVariable("AVO_2", $returnValue, $this->commandSetConfigArr["AVO_2"], true);
 						}
 					}
 
@@ -348,7 +350,7 @@ class SafeTechConnect extends IPSModule {
 	}
 
 
-	protected function UpdateVariable($key, $value, $configArr) {
+	protected function UpdateVariable($key, $value, $configArr, $addNewValue=false) {
 
 		$name = $configArr[ConfigArrOffset_Name];
 		$groupId = $configArr[ConfigArrOffset_GroupId];
@@ -390,7 +392,12 @@ class SafeTechConnect extends IPSModule {
         }
 
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Value '%s' for Variable '%s - %s'", print_r($value, true), $varId, IPS_GetName($varId)), 0); }
-        SetValue($varId, $value);
+		if($addNewValue) {
+			$valueOld = GetValue($varId);
+			SetValue($varId, $valueOld + $value);
+		} else {
+        	SetValue($varId, $value);
+		}
     
     }
 
@@ -746,8 +753,23 @@ class SafeTechConnect extends IPSModule {
 		IPS_SetHidden($this->RegisterVariableFloat("lastProcessingTotalDuration", "Last Processing Duration [ms]", "", 940), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("LastDataReceived", "Last Data Received", "~UnixTimestamp", 941), false);
 
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Alarm'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update 'Alarm'", $scriptScr, 990);
+
 		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Measurement'); ?>",$this->InstanceID);
-		$this->RegisterScript("UpdateScript", "Update Group 'Measurement'", $scriptScr, 990);
+		$this->RegisterScript("UpdateScript", "Update 'Measurement'", $scriptScr, 991);
+
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Network'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update 'Network'", $scriptScr, 992);
+
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Profile'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update 'Profile'", $scriptScr, 993);
+
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Settings'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update 'Settings'", $scriptScr, 994);
+
+		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'ALL'); ?>",$this->InstanceID);
+		$this->RegisterScript("UpdateScript", "Update 'ALL'", $scriptScr, 995);
 
 		IPS_ApplyChanges($this->archivInstanzID);
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }
