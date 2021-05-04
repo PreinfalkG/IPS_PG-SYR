@@ -101,7 +101,7 @@ trait SafeTech_CommandSet {
         $configArr["NPS"]    = array("Turbine no pulse time",					"SERVICE",	140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Seconds",				false,	"0 ... 4294967295 seconds");
         $configArr["VTO"]    = array("Valve test ongoing",						"USER",		140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.InactiveActive",		false,	"0 inactive | 1 active");
         $configArr["AVO"]    = array("Volume single water consumption", 		"FACTORY", 	130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
-        $configArr["AVO_2"]  = array("Volume single water consumption (Cumulative)", 	"FACTORY", 	-130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
+        $configArr["AVO2"]  = array("Volume single water consumption (Cumulative)", 	"FACTORY", 	-130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
                 
         $configArr["DBD"]    = array("MLT Pressure Drop",						"SERVICE",	100,	"Settings",		VARIABLE::TYPE_FLOAT,	 0.1,	310,	"SYR.Bar",					false,	"0.5 ... 3bar");
         $configArr["DBT"]    = array("MLT Pressure Drop Time",					"SERVICE",	100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		311,	"SYR.Seconds",				false,	"1 ... 15s");

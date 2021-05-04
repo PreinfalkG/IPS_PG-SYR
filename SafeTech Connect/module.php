@@ -330,7 +330,7 @@ class SafeTechConnect extends IPSModule {
 						if($key == "ALA") {
 							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
 						} else if ($key == "AVO") {
-							$this->UpdateVariable("AVO_2", $returnValue, $this->commandSetConfigArr["AVO_2"], true);
+							$this->UpdateVariable("AVO2", $returnValue, $this->commandSetConfigArr["AVO2"], true);
 						}
 					}
 
@@ -350,7 +350,7 @@ class SafeTechConnect extends IPSModule {
 	}
 
 
-	protected function UpdateVariable($key, $value, $configArr, $addNewValue=false) {
+	protected function UpdateVariable($key, $value, $configArr) {
 
 		$name = $configArr[ConfigArrOffset_Name];
 		$groupId = $configArr[ConfigArrOffset_GroupId];
@@ -392,12 +392,7 @@ class SafeTechConnect extends IPSModule {
         }
 
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Value '%s' for Variable '%s - %s'", print_r($value, true), $varId, IPS_GetName($varId)), 0); }
-		if($addNewValue) {
-			$valueOld = GetValue($varId);
-			SetValue($varId, $valueOld + $value);
-		} else {
-        	SetValue($varId, $value);
-		}
+    	SetValue($varId, $value);
     
     }
 
