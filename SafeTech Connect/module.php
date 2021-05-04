@@ -33,7 +33,7 @@ class SafeTechConnect extends IPSModule {
 		$this->apiUserLevel = 0;
 		$this->commandSetConfigArr = $this->GetCommandSetConfigArr();
 
-		if (IPS_GetKernelRunlevel() == 10103) {
+		//if (IPS_GetKernelRunlevel() == 10103) {
 
 			$currentStatus = $this->GetStatus();
 			if($currentStatus == 102) {				//Instanz ist aktiv
@@ -45,7 +45,7 @@ class SafeTechConnect extends IPSModule {
 			} else {
 				if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Current Status is '%s'", $currentStatus), 0); }	
 			}
-		}
+		//}
 	}
 
 
