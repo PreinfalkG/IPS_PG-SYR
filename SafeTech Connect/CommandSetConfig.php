@@ -66,11 +66,12 @@ trait SafeTech_CommandSet {
         $configArr["DKI"]    = array("Safe-Tec Device Kind ID",					"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		115,	"",					        false,	"0 return to default value | 1-255 (not changeable whith default settings)");
         $configArr["SRV"]    = array("Next maintenance",						"USER",		100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		116,	"",					        false,	"dd.mm.yyyy");
                     
-        $configArr["BAT"]    = array("Battery voltage",							"USER",		110,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		100,	"SYR.Voltage.2",	        false,	"Battery voltage in 1/100V, format x.xx");
-        $configArr["NET"]    = array("DC voltage ",   							"USER",		110,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		110,	"SYR.Voltage.2",	        false,	"DC voltage (power adaptor)");
+        $configArr["BAT"]    = array("Battery voltage",							"USER",		110,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		100,	"SYR.Voltage.1",	        false,	"Battery voltage in 1/100V, format x.xx");
+        $configArr["NET"]    = array("DC voltage ",   							"USER",		110,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		110,	"SYR.Voltage.1",	        false,	"DC voltage (power adaptor)");
         $configArr["CEL"]    = array("Temperature",   							"USER",		120,	"Measurement",	VARIABLE::TYPE_FLOAT,	 0.1,	120,	"SYR.Temp",		            false,	"0.0 ... 100.0°C (0 ... 1000)");
         $configArr["BAR"]    = array("Pressure",   								"USER",		120,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		130,	"SYR.mbar",			        false,	"in mbar, format x mbar");
         $configArr["CND"]    = array("Conductivity",   							"USER",		120,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		140,	"SYR.Conductivity",		    false,	"0...5000 uS/cm");
+        $configArr["dH"]     = array("Wasserhärte",   							"USER",		-120,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		140,	"SYR.dH",		            false,	"deutsche Wasserhärte (°dH)");
         $configArr["FLO"]    = array("Water flow",   							"USER",		130,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		150,	"SYR.WaterFlow",			false,	"0...6000 l/h");
         $configArr["LTV"]    = array("Last tapped volume",  					"USER",		130,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		160,	"SYR.Liter",		        false,	"Last tapped volume in liters");
                     

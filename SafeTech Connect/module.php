@@ -326,11 +326,18 @@ class SafeTechConnect extends IPSModule {
 					}
 
 					if($updateVariable) {
-						$this->UpdateVariable($key, $returnValue, $configArrElem);
 						if($key == "ALA") {
 							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
 						} else if ($key == "AVO") {
-							$this->UpdateVariable("AVO2", $returnValue, $this->commandSetConfigArr["AVO2"], true);
+							$this->UpdateVariable("AVO2", $returnValue, $this->commandSetConfigArr["AVO2"]);
+						} else if ($key == "CND") {
+							$this->UpdateVariable("dH", round($returnValue / 30, 1), $this->commandSetConfigArr["dH"]);
+						} else if ($key == "NET") {
+							$this->UpdateVariable($key, round($returnValue, 1), $configArrElem);
+						} else if ($key == "BAT") {
+							$this->UpdateVariable($key, round($returnValue, 1), $configArrElem);
+						} else {
+							$this->UpdateVariable($key, $returnValue, $configArrElem);
 						}
 					}
 
@@ -582,6 +589,13 @@ class SafeTechConnect extends IPSModule {
         } 
 
 
+        if ( !IPS_VariableProfileExists('SYR.Voltage.1') ) {
+            IPS_CreateVariableProfile('SYR.Voltage.1', VARIABLE::TYPE_FLOAT);
+            IPS_SetVariableProfileDigits('SYR.Voltage.1', 1 );
+            IPS_SetVariableProfileText('SYR.Voltage.1', "", " V" );
+            //IPS_SetVariableProfileValues('SYR.Voltage.1', 0, 0, 0);
+        } 
+
         if ( !IPS_VariableProfileExists('SYR.Voltage.2') ) {
             IPS_CreateVariableProfile('SYR.Voltage.2', VARIABLE::TYPE_FLOAT);
             IPS_SetVariableProfileDigits('SYR.Voltage.2', 2 );
@@ -726,8 +740,19 @@ class SafeTechConnect extends IPSModule {
 			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 254, "[%d] unknown", "", -1);
 			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 255, "NO ALARM [FF - %d]", "", -1);
 			IPS_SetVariableProfileAssociation('SYR.AlarmCodes', 256, "[%d] unknown", "", -1);
-
         }	
+
+		if ( !IPS_VariableProfileExists('SYR.dH') ) {
+            IPS_CreateVariableProfile('SYR.dH', VARIABLE::TYPE_FLOAT);
+            IPS_SetVariableProfileText('SYR.dH', "", "" );
+            IPS_SetVariableProfileAssociation('SYR.dH', 0, 		"%.1f °dH [sehr weich]", "", -1);			// [0-4]
+            IPS_SetVariableProfileAssociation('SYR.dH', 4.01, 	"%.1f °dH [weich]", "", -1);				// [4-9]
+			IPS_SetVariableProfileAssociation('SYR.dH', 9.01, 	"%.1f °dH [leicht hart]", "", -1);			// [9-15]
+			IPS_SetVariableProfileAssociation('SYR.dH', 15.01, 	"%.1f °dH [mäßig hart]", "", -1);			// [15-19]
+			IPS_SetVariableProfileAssociation('SYR.dH', 19.01, 	"%.1f °dH [hart]", "", -1);					// [19-25]
+			IPS_SetVariableProfileAssociation('SYR.dH', 25.01, 	"%.1f °dH [sehr hart]", "", -1);			// [über 25]
+        }	
+
 
 	}
 
