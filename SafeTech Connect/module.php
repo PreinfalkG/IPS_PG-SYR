@@ -33,15 +33,18 @@ class SafeTechConnect extends IPSModule {
 		$this->apiUserLevel = 0;
 		$this->commandSetConfigArr = $this->GetCommandSetConfigArr();
 
-		$currentStatus = $this->GetStatus();
-		if($currentStatus == 102) {				//Instanz ist aktiv
-			$this->logLevel = $this->ReadPropertyInteger("LogLevel");
-			if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, sprintf("Log-Level is %d", $this->logLevel), 0); }
-			$ip = $this->ReadPropertyString("SafeTech_IP");
-			$port = $this->ReadPropertyInteger("SafeTech_PORT");
-			$this->baseApiURL = sprintf("http://%s:%s", $ip, $port);
-		} else {
-			if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Current Status is '%s'", $currentStatus), 0); }	
+		if (IPS_GetKernelRunlevel() == 10103) {
+
+			$currentStatus = $this->GetStatus();
+			if($currentStatus == 102) {				//Instanz ist aktiv
+				$this->logLevel = $this->ReadPropertyInteger("LogLevel");
+				if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, sprintf("Log-Level is %d", $this->logLevel), 0); }
+				$ip = $this->ReadPropertyString("SafeTech_IP");
+				$port = $this->ReadPropertyInteger("SafeTech_PORT");
+				$this->baseApiURL = sprintf("http://%s:%s", $ip, $port);
+			} else {
+				if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Current Status is '%s'", $currentStatus), 0); }	
+			}
 		}
 	}
 
