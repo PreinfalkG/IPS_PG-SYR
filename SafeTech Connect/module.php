@@ -330,9 +330,8 @@ class SafeTechConnect extends IPSModule {
 
 					if($updateVariable) {
 						if($key == "ALA") {
+							$this->UpdateVariable($key, $returnValue, $configArrElem);
 							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
-						} else if ($key == "AVO") {
-							$this->UpdateVariable("AVO2", $returnValue, $this->commandSetConfigArr["AVO2"]);
 						} else if ($key == "CND") {
 							$this->UpdateVariable($key, $returnValue, $configArrElem);
 							$this->UpdateVariable("dH", round($returnValue / 30, 1), $this->commandSetConfigArr["dH"]);
@@ -403,8 +402,8 @@ class SafeTechConnect extends IPSModule {
         }
 
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Value '%s' for Variable '%s - %s'", print_r($value, true), $varId, IPS_GetName($varId)), 0); }
-    	SetValue($varId, $value);
-    
+
+		SetValue($varId, $value);
     }
 
 	public function SetApiUserLevel(int $level = 0) {
