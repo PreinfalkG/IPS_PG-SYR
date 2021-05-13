@@ -60,6 +60,7 @@ class SafeTechConnect extends IPSModule {
 		$this->RegisterPropertyBoolean('AutoUpdate', false);
 		$this->RegisterPropertyInteger("UpdateInterval", 30);		
 
+		$this->RegisterPropertyBoolean("cb_UpdatePRF", false);
 		$this->RegisterPropertyBoolean("cb_UpdateAB", false);
 		$this->RegisterPropertyBoolean("cb_UpdataCEL", false);
 		$this->RegisterPropertyBoolean("cb_UpdateBAR", false);
@@ -153,6 +154,7 @@ class SafeTechConnect extends IPSModule {
 		
 			$start_Time = microtime(true);
 
+			if($this->ReadPropertyBoolean("cb_UpdatePRF")) 		{ $this->Update("PRF"); }
 			if($this->ReadPropertyBoolean("cb_UpdateAB")) 		{ $this->Update("AB"); }
 			if($this->ReadPropertyBoolean("cb_UpdataCEL")) 		{ $this->Update("CEL"); }
 			if($this->ReadPropertyBoolean("cb_UpdateBAR")) 		{ $this->Update("BAR"); }
@@ -431,6 +433,28 @@ class SafeTechConnect extends IPSModule {
 		$apiResponse = $this->CurlGet($apiURL);	
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
 
+	}
+
+
+	public function SetAktivProfile($profileNr = 2) {
+
+		// 1 = Anwesend
+		// 2 = Abwesend
+		// 3-8 = Custom Prfile
+
+		if( ($profileNr < 1 ) OR ($profileNr > 8) ) {
+			$profileNr = 2;
+		}
+
+		$apiURL = $this->baseApiURL . sprintf("/safe-tec/set/PRF/%d", $profileNr);
+		
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("SET Aktiv Profile to '%d' > %s", $profileNr, $apiURL), 0); }
+		$apiResponse = $this->CurlGet($apiURL);	
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
+
+		$this->UpdateGroup("Profile");
+		//$this->GetAndUpdateVariable("PRF", true);		
+		//return $apiResponse;
 	}
 
 

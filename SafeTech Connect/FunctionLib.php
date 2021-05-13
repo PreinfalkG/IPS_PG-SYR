@@ -117,7 +117,7 @@ trait SafeTech_FunctionLib {
         
         if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]",  $result, $duration), 0); }   
         
-        $responseInfo =  sprintf("%s [%s ms] >> %s\r\n", $url, $duration, $result);
+        $responseInfo =  sprintf("SUMMARY INFO :: %s [%s ms] >> %s\r\n", $url, $duration, $result);
         if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, $responseInfo, 0); }   
         //echo $responseInfo;
 

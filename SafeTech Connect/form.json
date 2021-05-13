@@ -80,6 +80,11 @@
                     "suffix": "sec"
                 },       
                 {
+                    "name": "cb_UpdatePRF",
+                    "type": "CheckBox",
+                    "caption": "Aktives Profile [PRF]"
+                },                
+                {
                     "name": "cb_UpdateAB",
                     "type": "CheckBox",
                     "caption": "Absperrung / Shutoff [AB]"
@@ -169,6 +174,11 @@
             "expanded": false,
             "visible": true,
             "items": [
+                {
+                    "type": "Button",
+                    "caption": "Aktives Profile [PRF]",
+                    "onClick": "STC_Update($id, 'PRF');"
+                },                  
                 {
                     "type": "Button",
                     "caption": "Absperrung / Shutoff [AB]",
