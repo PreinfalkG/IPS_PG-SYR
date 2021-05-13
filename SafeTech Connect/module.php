@@ -780,6 +780,20 @@ class SafeTechConnect extends IPSModule {
 			IPS_SetVariableProfileAssociation('SYR.dH', 25.01, 	"%.1f °dH [sehr hart]", "", -1);			// [über 25]
         }	
 
+		if ( !IPS_VariableProfileExists('SYR.AktivProfile') ) {
+            IPS_CreateVariableProfile('SYR.AktivProfile', VARIABLE::TYPE_INTEGER);
+            IPS_SetVariableProfileText('SYR.AktivProfile', "", "" );
+            IPS_SetVariableProfileAssociation('SYR.AktivProfile', 0, 	"%d - unknown", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 1, 	"%d - Anwesend", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 2, 	"%d - Abwesend", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 3, 	"%d - Sleeping", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 4, 	"%d - Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 5, 	"%d - Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 6, 	"%d - Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 7, 	"%d - Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 8, 	"%d - Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 9, 	"%d - unknown", "", -1);
+        }	
 
 	}
 

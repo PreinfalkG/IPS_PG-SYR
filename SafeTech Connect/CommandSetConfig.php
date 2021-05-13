@@ -23,7 +23,7 @@ trait SafeTech_CommandSet {
 
         $configArr["AB"]     = array("Absperrung",  							"USER",		100,    "Measurement",	VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.Absperrung",	        false,	"1 Opened | 2 Closed");
                     
-        $configArr["PRF"]    = array("Aktiv Profile Nummer", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		100,	"",					        false,	"activ Profile Number");
+        $configArr["PRF"]    = array("Aktiv Profile Nummer", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.AktivProfile",					        false,	"activ Profile Number");
         $configArr["PRN"]    = array("Number of Profiles", 						"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		110,	"",					        false,	"Number of profiles (available for user)");
                     
         $configArr["PA1"]    = array("Profile 1 available", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		111,	"",					        false,	"0 Profile not avialable | 1 Profile avialable");
