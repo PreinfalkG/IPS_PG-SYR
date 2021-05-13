@@ -832,6 +832,15 @@ class SafeTechConnect extends IPSModule {
 		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'ALL'); ?>",$this->InstanceID);
 		$this->RegisterScript("UpdateALL", "Update 'ALL'", $scriptScr, 995);
 
+		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 1); ?>",$this->InstanceID);
+		$this->RegisterScript("SetProfile1", "Set Profile - 1 Anwesend", $scriptScr, 996);
+
+		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 2); ?>",$this->InstanceID);
+		$this->RegisterScript("SetProfile2", "Set Profile - 2 Abwesend", $scriptScr, 997);
+
+		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 3); ?>",$this->InstanceID);
+		$this->RegisterScript("SetProfile3", "Set Profile - 3 Sleeping", $scriptScr, 998);		
+
 		IPS_ApplyChanges($this->archivInstanzID);
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }
 
