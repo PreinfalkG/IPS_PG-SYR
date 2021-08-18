@@ -218,7 +218,7 @@ class SafeTechConnect extends IPSModule {
 				if(($groupNameToUpdate == "ALL") OR ($groupNameToUpdate == $groupName)) {
 					if($groupId > 0) {
 						$cnt++;
-						//set_time_limit(15);	disabled in IPC v6.0
+						//ips6-- set_time_limit(15);	disabled in IPC v6.0
 						$this->GetAndUpdateVariable($key, true);
 						IPS_Sleep(40);
 					}
@@ -253,7 +253,7 @@ class SafeTechConnect extends IPSModule {
 			if(in_array($groupId, $arrGroupIds, true)) {
 				if($groupId > 0) {
 					$cnt++;
-					set_time_limit(15);
+					//ips6-- set_time_limit(15);
 					$this->GetAndUpdateVariable($key, true);
 					IPS_Sleep(50);
 				}
