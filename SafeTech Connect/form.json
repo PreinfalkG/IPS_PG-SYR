@@ -278,7 +278,44 @@
 
         {
             "type": "ExpansionPanel",
-            "caption": "Reset and Delete Funkctions",
+            "caption": "Profile and Shutoff Controls",
+            "expanded": false,
+            "visible": true,
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "Open Shutoff / Absperrung öffnen",
+                    "onClick": "STC_OpenShutoff($id);",
+                    "confirm": "SafeTech Connect Absperungen öffnen. Sind Sie sicher?"
+                },
+                {
+                    "type": "Button",
+                    "caption": "Close Shutoff / Absperrung schließen",
+                    "onClick": "STC_CloseShutoff($id);",
+                    "confirm": "SafeTech Connect Absperungen schließen. Sind Sie sicher?"
+                },
+                {
+                    "type": "Button",
+                    "caption": "Set Aktiv Profile to '1 - Anwesend'",
+                    "onClick": "STC_SetAktivProfile($id, 1);"
+                },
+                {
+                    "type": "Button",
+                    "caption": "Set Aktiv Profile to '2 - Abwesend'",
+                    "onClick": "STC_SetAktivProfile($id, 2);"
+                },
+                {
+                    "type": "Button",
+                    "caption": "Set Aktiv Profile to '3 - Sleeping'",
+                    "onClick": "STC_SetAktivProfile($id, 3);"
+                }          
+            ]
+        },
+
+
+        {
+            "type": "ExpansionPanel",
+            "caption": "Reset and Delete Functions",
             "expanded": false,
             "visible": true,
             "items": [

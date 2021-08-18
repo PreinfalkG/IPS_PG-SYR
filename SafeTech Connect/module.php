@@ -218,7 +218,7 @@ class SafeTechConnect extends IPSModule {
 				if(($groupNameToUpdate == "ALL") OR ($groupNameToUpdate == $groupName)) {
 					if($groupId > 0) {
 						$cnt++;
-						set_time_limit(15);
+						//set_time_limit(15);	disabled in IPC v6.0
 						$this->GetAndUpdateVariable($key, true);
 						IPS_Sleep(40);
 					}
@@ -436,7 +436,30 @@ class SafeTechConnect extends IPSModule {
 	}
 
 
-	public function SetAktivProfile($profileNr = 2) {
+	public function OpenShutoff() {
+
+		// Absperrung (Shutoff) | 1 Opened | 2 Closed
+		$apiURL = $this->baseApiURL . "/safe-tec/set/ab/1";
+
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "OPEN Shutoff will be executed ...", 0); }
+		$apiResponse = $this->CurlGet($apiURL);	
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }		
+
+	}
+
+	public function CloseShutoff() {
+
+		// Absperrung (Shutoff) | 1 Opened | 2 Closed
+		$apiURL = $this->baseApiURL . "/safe-tec/set/ab/2";
+
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "CLOSE Shutoff will be executed ...", 0); }
+		$apiResponse = $this->CurlGet($apiURL);	
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
+
+	}
+
+
+	public function SetAktivProfile(int $profileNr = 2) {
 
 		// 1 = Anwesend
 		// 2 = Abwesend
@@ -783,16 +806,16 @@ class SafeTechConnect extends IPSModule {
 		if ( !IPS_VariableProfileExists('SYR.AktivProfile') ) {
             IPS_CreateVariableProfile('SYR.AktivProfile', VARIABLE::TYPE_INTEGER);
             IPS_SetVariableProfileText('SYR.AktivProfile', "", "" );
-            IPS_SetVariableProfileAssociation('SYR.AktivProfile', 0, 	"%d - unknown", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 1, 	"%d - Anwesend", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 2, 	"%d - Abwesend", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 3, 	"%d - Sleeping", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 4, 	"%d - Custom", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 5, 	"%d - Custom", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 6, 	"%d - Custom", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 7, 	"%d - Custom", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 8, 	"%d - Custom", "", -1);
-			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 9, 	"%d - unknown", "", -1);
+            IPS_SetVariableProfileAssociation('SYR.AktivProfile', 0, 	"[%d] unknown", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 1, 	"[%d] Anwesend", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 2, 	"[%d] Abwesend", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 3, 	"[%d] Sleeping", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 4, 	"[%d] Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 5, 	"[%d] Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 6, 	"[%d] Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 7, 	"[%d] Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 8, 	"[%d] Custom", "", -1);
+			IPS_SetVariableProfileAssociation('SYR.AktivProfile', 9, 	"[%d] unknown", "", -1);
         }	
 
 	}
@@ -832,14 +855,22 @@ class SafeTechConnect extends IPSModule {
 		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'ALL'); ?>",$this->InstanceID);
 		$this->RegisterScript("UpdateALL", "Update 'ALL'", $scriptScr, 995);
 
+
+		$scriptScr = sprintf("<?php STC_OpenShutoff(%s); ?>",$this->InstanceID);
+		$this->RegisterScript("OpenShutoff", "Open Shutoff / Absperrung öffnen", $scriptScr, 998);
+
+		$scriptScr = sprintf("<?php STC_CloseShutoff(%s); ?>",$this->InstanceID);
+		$this->RegisterScript("CloseShutoff", "Close Shutoff / Absperrung schließen", $scriptScr, 998);
+
+
 		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 1); ?>",$this->InstanceID);
-		$this->RegisterScript("SetProfile1", "Set Profile - 1 Anwesend", $scriptScr, 996);
+		$this->RegisterScript("SetProfile1", "Set Profile - 1 Anwesend", $scriptScr, 999);
 
 		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 2); ?>",$this->InstanceID);
-		$this->RegisterScript("SetProfile2", "Set Profile - 2 Abwesend", $scriptScr, 997);
+		$this->RegisterScript("SetProfile2", "Set Profile - 2 Abwesend", $scriptScr, 999);
 
 		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 3); ?>",$this->InstanceID);
-		$this->RegisterScript("SetProfile3", "Set Profile - 3 Sleeping", $scriptScr, 998);		
+		$this->RegisterScript("SetProfile3", "Set Profile - 3 Sleeping", $scriptScr, 999);		
 
 		IPS_ApplyChanges($this->archivInstanzID);
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }
