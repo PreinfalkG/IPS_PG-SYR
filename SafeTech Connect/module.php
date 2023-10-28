@@ -14,7 +14,6 @@ class SafeTechConnect extends IPSModule {
 
 	private $logLevel = 4;
 	private $parentRootId;
-	private $archivInstanzID;
 
 	private $baseApiURL;
 	private $apiUserLevel;
@@ -27,7 +26,6 @@ class SafeTechConnect extends IPSModule {
 		parent::__construct($InstanceID);		// Diese Zeile nicht löschen
 
 		$this->parentRootId = IPS_GetParent($this->InstanceID);
-		$this->archivInstanzID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
 
 		$this->UpdateInProcess = false;
 		$this->apiUserLevel = 0;
@@ -79,7 +77,7 @@ class SafeTechConnect extends IPSModule {
 		$this->RegisterPropertyBoolean("cb_UpdateGroupNetwork", false);
 		$this->RegisterPropertyBoolean("cb_UpdateGroupSettings", false);						
 
-		$this->RegisterTimer('Timer_AutoUpdate', 0, 'STC_Timer_AutoUpdate($_IPS["TARGET"]);');
+		$this->RegisterTimer('TimerAutoUpdate_STC', 0, 'STC_TimerAutoUpdate_STC($_IPS["TARGET"]);');
 
 	}
 
@@ -117,10 +115,10 @@ class SafeTechConnect extends IPSModule {
 		} else {
 			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Auto-Update Timer Intervall to %s sec", $updateInterval), 0); }
 		}
-		$this->SetTimerInterval("Timer_AutoUpdate", $updateInterval*1000);	
+		$this->SetTimerInterval("TimerAutoUpdate_STC", $updateInterval*1000);	
 	}
 
-	public function Timer_AutoUpdate() {
+	public function TimerAutoUpdate_STC() {
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "called ...", 0); }
 		$skipAutoUpdate = GetValue($this->GetIDForIdent("skipAutoUpdate"));
 		if($skipAutoUpdate) {
@@ -872,7 +870,8 @@ class SafeTechConnect extends IPSModule {
 		$scriptScr = sprintf("<?php STC_SetAktivProfile(%s, 3); ?>",$this->InstanceID);
 		$this->RegisterScript("SetProfile3", "Set Profile - 3 Sleeping", $scriptScr, 999);		
 
-		IPS_ApplyChanges($this->archivInstanzID);
+		$archivInstanzID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
+		IPS_ApplyChanges($archivInstanzID);
 		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }
 
 	}

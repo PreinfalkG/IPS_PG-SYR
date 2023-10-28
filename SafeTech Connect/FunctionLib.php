@@ -51,7 +51,7 @@ trait SafeTech_FunctionLib {
 			CURLOPT_CONNECTTIMEOUT_MS => 600,
 	        //CURLOPT_TIMEOUT => 4,
 			CURLOPT_TIMEOUT_MS, 600,
-			CURLOPT_FORBID_REUSE => true,
+			//CURLOPT_FORBID_REUSE => true,     //28.10.2023
 			
 	    );
 	   
@@ -91,7 +91,7 @@ trait SafeTech_FunctionLib {
 
 		} finally {
 
-			curl_close($ch);
+			//curl_close($ch);      //28.10.2023
 
             if(!is_null($errorMsg)) {
 
