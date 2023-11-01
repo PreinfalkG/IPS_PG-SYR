@@ -22,9 +22,6 @@ Alle Daten welche as SafeTech connect Geräte via REST API zur Verfügung stellt
 
 ### 3. Software-Installation
 
-Über das Modul-Control folgende URL hinzufügen.  
-`https://github.com/PreinfalkG/IPS_PG-SYR.git`  
-
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 

@@ -100,8 +100,7 @@ trait SafeTech_FunctionLib {
                 SetValue($this->GetIDForIdent("LastError"), $errorMsg);
     
                 if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $errorMsg, 0); }
-                $logSender = sprintf("%s [%s]", IPS_GetName($this->InstanceID), ($this->InstanceID));
-                IPS_LogMessage($logSender, $errorMsg);
+
                 //die();
                 $result = $errorMsg; 
             }
@@ -154,8 +153,6 @@ trait SafeTech_FunctionLib {
 
             $logMsg =  sprintf("ERROR %s", $errorMsg);
             if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $logMsg, 0); }
-            $logSender = sprintf("%s [%s]", IPS_GetName($this->InstanceID), ($this->InstanceID));
-            IPS_LogMessage($logSender, $logMsg);
             //die();
             $result = '{ "ERROR": "HTTP request failed" }';
 
