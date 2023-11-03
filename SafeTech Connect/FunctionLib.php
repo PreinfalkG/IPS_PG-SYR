@@ -25,44 +25,48 @@ abstract class VARIABLE
 
 trait SafeTech_FunctionLib {
 
-
     protected function SetAdminRights() {
         $apiURL = "safe-tec/set/ADM/(2)f";
     }
-
 
 
 	protected function CurlGet($url) {
 	
         $errorMsg = NULL;
 
-        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, "API Request: " . $url, 0); }        
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, "API Request: " . $url); }        
         SetValue($this->GetIDForIdent("requestCnt"), GetValue($this->GetIDForIdent("requestCnt")) + 1); 
         
         $timeStart = microtime(true);
 	
+	    $ch = curl_init();
+   	
+        /*
 	    $options = array(
-	        CURLOPT_URL => $url,
+	        CURLOPT_URL => $url, 
 	        //CURLOPT_HEADER => 0,
 			CURLOPT_HTTPHEADER => array('Connection: close'),
-	        CURLOPT_RETURNTRANSFER => TRUE,
+	        CURLOPT_RETURNTRANSFER => true,
 			//CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			//CURLOPT_USERPWD => "$login:$password",
 			CURLOPT_CONNECTTIMEOUT_MS => 600,
 	        //CURLOPT_TIMEOUT => 4,
 			CURLOPT_TIMEOUT_MS, 600,
 			//CURLOPT_FORBID_REUSE => true,     //28.10.2023
-			
 	    );
-	   
-	    $ch = curl_init();
-		
-		$time_start = microtime(true);
-		
+        */
+
 		try {		
 		
-		    curl_setopt_array($ch, $options);
-			
+             //curl_setopt_array($ch, $options);
+
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+            curl_setopt($ch, CURLOPT_TIMEOUT , 6);
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: close')); 	
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
 			$result =  curl_exec($ch);
 			$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
@@ -114,7 +118,7 @@ trait SafeTech_FunctionLib {
         }
 		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
         
-        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]",  $result, $duration), 0); }   
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]",  $result, $duration)); }   
         
         $responseInfo =  sprintf("SUMMARY INFO :: %s [%s ms] >> %s\r\n", $url, $duration, $result);
         if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, $responseInfo, 0); }   
@@ -122,11 +126,6 @@ trait SafeTech_FunctionLib {
 
         return $result;			
 	}
-
-
-
-
-
 
     protected function CallRestAPI($url) {
 
@@ -141,7 +140,7 @@ trait SafeTech_FunctionLib {
         //$result = @file_get_contents($url, false, $streamContext);
 
         $duration = $this->CalcDuration_ms($timeStart);
-        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]", $result, $duration), 0); }   
+        if($this->logLevel >= LogLevel::COMMUNICATION) { $this->AddLog(__FUNCTION__, sprintf("API Response: %s [%s ms]", $result, $duration)); }   
 		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), $duration); 
 
         if ($result === false) {
@@ -152,7 +151,7 @@ trait SafeTech_FunctionLib {
             SetValue($this->GetIDForIdent("LastError"), $errorMsg);
 
             $logMsg =  sprintf("ERROR %s", $errorMsg);
-            if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $logMsg, 0); }
+            if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__FUNCTION__, $logMsg); }
             //die();
             $result = '{ "ERROR": "HTTP request failed" }';
 

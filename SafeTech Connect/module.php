@@ -15,9 +15,7 @@ class SafeTechConnect extends IPSModule {
 	private $logLevel = 4;
 	private $logCnt = 0;	
 	private $enableIPSLogOutput = false;
-	private $parentRootId;
 
-	private $baseApiURL;
 	private $apiUserLevel;
 	private $commandSetConfigArr;
 
@@ -27,21 +25,12 @@ class SafeTechConnect extends IPSModule {
 	
 		parent::__construct($InstanceID);		// Diese Zeile nicht löschen
 
+		$this->logLevel = @$this->ReadPropertyInteger("LogLevel"); 
+		if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__FUNCTION__, sprintf("Log-Level is %d", $this->logLevel)); }	
+
 		$this->UpdateInProcess = false;
 		$this->apiUserLevel = 0;
 		$this->commandSetConfigArr = $this->GetCommandSetConfigArr();
-
-		$currentStatus = @$this->GetStatus();
-		if($currentStatus == 102) {				//Instanz ist aktiv
-			$this->parentRootId = IPS_GetParent($this->InstanceID);			
-			$this->logLevel = $this->ReadPropertyInteger("LogLevel");
-			if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, sprintf("Log-Level is %d", $this->logLevel), 0); }
-			$ip = $this->ReadPropertyString("SafeTech_IP");
-			$port = $this->ReadPropertyInteger("SafeTech_PORT");
-			$this->baseApiURL = sprintf("http://%s:%s", $ip, $port);
-		} else {
-			if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Current Status is '%s'", $currentStatus), 0); }	
-		}
 	}
 
 
@@ -50,11 +39,11 @@ class SafeTechConnect extends IPSModule {
 		parent::Create();				//Never delete this line!
 
 		$logMsg = sprintf("Create Modul '%s [%s]'...", IPS_GetName($this->InstanceID), $this->InstanceID);
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, $logMsg, 0); }
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__FUNCTION__, $logMsg); }
 		IPS_LogMessage(__CLASS__."_".__FUNCTION__, $logMsg);
 
 		$logMsg = sprintf("KernelRunlevel '%s'", IPS_GetKernelRunlevel());
-		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__FUNCTION__, $logMsg, 0); }			
+		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__FUNCTION__, $logMsg); }			
 
 		$this->RegisterPropertyString('SafeTech_IP', "10.0.10.181");
 		$this->RegisterPropertyInteger('SafeTech_PORT', 5333);
@@ -97,7 +86,7 @@ class SafeTechConnect extends IPSModule {
 		parent::ApplyChanges();					//Never delete this line!
 
 		$this->logLevel = $this->ReadPropertyInteger("LogLevel");
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Log-Level to %d", $this->logLevel), 0); }
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Log-Level to %d", $this->logLevel)); }
 
 		$this->RegisterProfiles();
 		$this->RegisterVariables();  
@@ -113,24 +102,24 @@ class SafeTechConnect extends IPSModule {
 
 	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)	{
 		$logMsg = sprintf("TimeStamp: %s | SenderID: %s | Message: %s | Data: %s", $TimeStamp, $SenderID, $Message, json_encode($Data));
-		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__FUNCTION__, $logMsg, 0); }
+		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__FUNCTION__, $logMsg); }
 		//IPS_LogMessage(__CLASS__."_".__FUNCTION__, $logMsg);
 	}
 
 	public function SetUpdateInterval(int $updateInterval) {
 		if ($updateInterval == 0) {  
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Auto-Update stopped [AutoUpdateIntervall = 0]", 0); }	
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Auto-Update stopped [AutoUpdateIntervall = 0]"); }	
 		} else if ($updateInterval < 5) { 
 			$updateInterval = 5; 
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Auto-Update Timer Intervall to %s sec", $updateInterval), 0); }	
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Auto-Update Timer Intervall to %s sec", $updateInterval)); }	
 		} else {
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Auto-Update Timer Intervall to %s sec", $updateInterval), 0); }
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Auto-Update Timer Intervall to %s sec", $updateInterval)); }
 		}
 		$this->SetTimerInterval("TimerAutoUpdate_STC", $updateInterval*1000);	
 	}
 
 	public function TimerAutoUpdate_STC() {
-		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "called ...", 0); }
+		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "called ..."); }
 		$skipAutoUpdate = GetValue($this->GetIDForIdent("skipAutoUpdate"));
 		if($skipAutoUpdate) {
 			$lastChanged  = time() - round(IPS_GetVariable($this->GetIDForIdent("skipAutoUpdate"))["VariableChanged"]);
@@ -142,7 +131,7 @@ class SafeTechConnect extends IPSModule {
 
 				$lastError  = time() - round(IPS_GetVariable($this->GetIDForIdent("ErrorCnt"))["VariableChanged"]);
 				$logMsg =  sprintf("WARNING :: Skip Auto Update for %d sec for Instance '%s' >> last error %d seconds ago...", SKIP_AutoUpdate_Duration, $this->InstanceID, $lastError);
-				if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, $logMsg, 0); } 
+				if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, $logMsg); } 
 			} 
 		} else {
 			$this->DoUpdates();
@@ -150,7 +139,7 @@ class SafeTechConnect extends IPSModule {
 	}
 
 	public function DoUpdates() {
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Update ..", 0); }	
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Update .."); }	
 
 		$currentStatus = $this->GetStatus();
 		if($currentStatus == 102) {		
@@ -181,7 +170,7 @@ class SafeTechConnect extends IPSModule {
 
 		} else {
 			SetValue($this->GetIDForIdent("instanzInactivCnt"), GetValue($this->GetIDForIdent("instanzInactivCnt")) + 1);
-			if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("Instanz '%s - [%s]' not activ [Status=%s]", $this->InstanceID, IPS_GetName($this->InstanceID), $currentStatus), 0); }
+			if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("Instanz '%s - [%s]' not activ [Status=%s]", $this->InstanceID, IPS_GetName($this->InstanceID), $currentStatus)); }
 		}
 
 	}
@@ -278,9 +267,9 @@ class SafeTechConnect extends IPSModule {
 			$varGroup = $configArrElem[ConfigArrOffset_GroupName];
 			
 			$logMsg = sprintf("%s | Level: %s | Group: %s", $responseKey, $userLevel, $varGroup);
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $logMsg, 0); }
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $logMsg); }
 
-			$apiURL = $this->baseApiURL . "/safe-tec/get/" . $key;	
+			$apiURL = $this->GetBaseApiURL() . "/safe-tec/get/" . $key;	
 			
 			//$apiResponse = $this->CallRestAPI($apiURL);	
 			$apiResponse = $this->CurlGet($apiURL);	
@@ -289,7 +278,7 @@ class SafeTechConnect extends IPSModule {
 
 			if (strpos($apiResponse, "ERROR: ADM") !== false) {
 
-				if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Need higher API Rights > Request 'FACTORY/(ADMIN) Rights ...", 0); }
+				if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Need higher API Rights > Request 'FACTORY/(ADMIN) Rights ..."); }
 				$this->SetApiUserLevel(2);
 				SetValue($this->GetIDForIdent("grantAdminRightsCnt"), GetValue($this->GetIDForIdent("grantAdminRightsCnt")) + 1); 
 
@@ -300,8 +289,8 @@ class SafeTechConnect extends IPSModule {
 
 
 			if (strpos($apiResponse, "ERROR") !== false) {
-				//if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR :: Response for Request '%s' is '%s'", $key, $apiValue), 0); }
-				if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("%s [UserLevel in Config: %s]", $apiResponse, $userLevel), 0); }
+				//if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR :: Response for Request '%s' is '%s'", $key, $apiValue)); }
+				if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("%s [UserLevel in Config: %s]", $apiResponse, $userLevel)); }
 				$this->ErrorCnt++;
 			} else {
 
@@ -313,23 +302,23 @@ class SafeTechConnect extends IPSModule {
 					switch($varType) {
 						case VARIABLE::TYPE_BOOLEAN:
 							$returnValue = boolval($apiValue);
-							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Boolean |%s|", $apiValue, $returnValue), 0); }
+							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Boolean |%s|", $apiValue, $returnValue)); }
 							break;
 						case VARIABLE::TYPE_INTEGER:
 							$apiValue = preg_replace('~\D~', '', $apiValue);
 							$returnValue = intval($apiValue);
 							$returnValue = $returnValue * $configArrElem[ConfigArrOffset_Multiplikator];
-							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Integer |%s|", $apiValue, $returnValue), 0); }
+							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Integer |%s|", $apiValue, $returnValue)); }
 							break;
 						case VARIABLE::TYPE_FLOAT:
 							$returnValue = floatval(str_replace(',', '.', str_replace('.', '', $apiValue)));
 							$returnValue = $returnValue * $configArrElem[ConfigArrOffset_Multiplikator];
-							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Float |%s|", $apiValue, $returnValue), 0); }
+							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Parse apiValue '%s' to Float |%s|", $apiValue, $returnValue)); }
 							break;
 						case VARIABLE::TYPE_STRING:
 						default:
 							$returnValue = print_r($apiValue, true);
-							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("apiValue String |%s|", $returnValue), 0); }
+							if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("apiValue String |%s|", $returnValue)); }
 							break;															
 					}
 
@@ -350,7 +339,7 @@ class SafeTechConnect extends IPSModule {
 					}
 
 				} else {
-					if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: RequestKey '%s' does not exist in Response '%s'", $responseKey,  $apiResponse), 0); }
+					if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: RequestKey '%s' does not exist in Response '%s'", $responseKey,  $apiResponse)); }
 					return $returnValue;
 				}
 
@@ -358,7 +347,7 @@ class SafeTechConnect extends IPSModule {
 			return $returnValue;
 			
 		} else {
-			if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: ConfigArrayKey '%s' does not exist	", $key), 0); }
+			if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: ConfigArrayKey '%s' does not exist	", $key)); }
 			return $returnValue;
 		}
 
@@ -371,14 +360,15 @@ class SafeTechConnect extends IPSModule {
 		$groupId = $configArr[ConfigArrOffset_GroupId];
 		$groupName = $configArr[ConfigArrOffset_GroupName];
 	
-		$instanzId = @IPS_GetObjectIDByIdent($groupName, $this->parentRootId);
+		$parentRootId = IPS_GetParent($this->InstanceID);
+		$instanzId = @IPS_GetObjectIDByIdent($groupName, $parentRootId);
 		if($instanzId === false) {
 			$instanzId = IPS_CreateInstance("{485D0419-BE97-4548-AA9C-C083EB82E61E}");
 			IPS_SetIdent($instanzId, $groupName);
 			IPS_SetName($instanzId, $groupName);
-			IPS_SetParent($instanzId,  $this->parentRootId);
+			IPS_SetParent($instanzId,  $parentRootId);
 			IPS_SetPosition($instanzId, $groupId);
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Instance '%s' created with ID '%s'", $groupName, $instanzId), 0); }
+			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Instance '%s' created with ID '%s'", $groupName, $instanzId)); }
 		}
 
         $varId = @IPS_GetObjectIDByIdent($key, $instanzId);
@@ -398,15 +388,15 @@ class SafeTechConnect extends IPSModule {
             if($profileName != "") { 
                 $return = @IPS_SetVariableCustomProfile($varId, $profileName); 
                 if(!$return) { 
-                    if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR setting Profile '%s' to varID %s", $profileName, $varId), 0); }
+                    if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR setting Profile '%s' to varID %s", $profileName, $varId)); }
                 }
             }
-            if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Variable '%s' created for '%s - %s'", $varId, $key, $name), 0); }
+            if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Variable '%s' created for '%s - %s'", $varId, $key, $name)); }
         } else {
-            if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Found Variable '%s' for '%s'", $varId, $key), 0); }
+            if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Found Variable '%s' for '%s'", $varId, $key)); }
         }
 
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Value '%s' for Variable '%s - %s'", print_r($value, true), $varId, IPS_GetName($varId)), 0); }
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Set Value '%s' for Variable '%s - %s'", print_r($value, true), $varId, IPS_GetName($varId))); }
 
 		SetValue($varId, $value);
     }
@@ -416,23 +406,24 @@ class SafeTechConnect extends IPSModule {
 		//1 = SERVICE			> set/adm/(1)
 		//2 = FACTORY (ADMIN)	> set/adm/(2)f
 
-		$apiURL = $this->baseApiURL . "/safe-tec/clr/ADM";
+		$baseApiURL = $this->GetBaseApiURL();
+		$apiURL = $baseApiURL . "/safe-tec/clr/ADM";
 		switch($level) {
 			case 0:
-				$apiURL = $this->baseApiURL . "/safe-tec/clr/ADM";	
+				$apiURL = $baseApiURL . "/safe-tec/clr/ADM";	
 				break;
 			case 1:
-				$apiURL = $this->baseApiURL . "/safe-tec/set/ADM/(1)";
+				$apiURL = $baseApiURL . "/safe-tec/set/ADM/(1)";
 				break;
 			case 2:
-				$apiURL = $this->baseApiURL . "/safe-tec/set/ADM/(2)f";
+				$apiURL = $baseApiURL . "/safe-tec/set/ADM/(2)f";
 				break;
 			default:
-				$apiURL = $this->baseApiURL . "/safe-tec/clr/ADM";
+				$apiURL = $baseApiURL . "/safe-tec/clr/ADM";
 				break;
 		}
 
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("SET API UserLevel > %s", $apiURL), 0); }
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("SET API UserLevel > %s", $apiURL)); }
 		$apiResponse = $this->CurlGet($apiURL);	
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
 
@@ -440,25 +431,19 @@ class SafeTechConnect extends IPSModule {
 
 
 	public function OpenShutoff() {
-
 		// Absperrung (Shutoff) | 1 Opened | 2 Closed
-		$apiURL = $this->baseApiURL . "/safe-tec/set/ab/1";
-
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "OPEN Shutoff will be executed ...", 0); }
+		$apiURL = $this->GetBaseApiURL() . "/safe-tec/set/ab/1";
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "OPEN Shutoff will be executed ..."); }
 		$apiResponse = $this->CurlGet($apiURL);	
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }		
-
 	}
 
 	public function CloseShutoff() {
-
 		// Absperrung (Shutoff) | 1 Opened | 2 Closed
-		$apiURL = $this->baseApiURL . "/safe-tec/set/ab/2";
-
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "CLOSE Shutoff will be executed ...", 0); }
+		$apiURL = $this->GetBaseApiURL() . "/safe-tec/set/ab/2";
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "CLOSE Shutoff will be executed ..."); }
 		$apiResponse = $this->CurlGet($apiURL);	
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
-
 	}
 
 
@@ -472,9 +457,9 @@ class SafeTechConnect extends IPSModule {
 			$profileNr = 2;
 		}
 
-		$apiURL = $this->baseApiURL . sprintf("/safe-tec/set/PRF/%d", $profileNr);
+		$apiURL = $this->GetBaseApiURL() . sprintf("/safe-tec/set/PRF/%d", $profileNr);
 		
-		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("SET Aktiv Profile to '%d' > %s", $profileNr, $apiURL), 0); }
+		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("SET Aktiv Profile to '%d' > %s", $profileNr, $apiURL)); }
 		$apiResponse = $this->CurlGet($apiURL);	
 		if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $apiResponse, 0); }
 
@@ -877,24 +862,32 @@ class SafeTechConnect extends IPSModule {
 
 		$archivInstanzID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
 		IPS_ApplyChanges($archivInstanzID);
-		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered", 0); }
+		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, "Variables registered"); }
 
 	}
 
-	protected function AddLog($name, $daten, $format) {
+
+	public function GetBaseApiURL(): string {
+		$ip = $this->ReadPropertyString("SafeTech_IP");
+		$port = $this->ReadPropertyInteger("SafeTech_PORT");
+		$baseApiURL = sprintf("http://%s:%s", $ip, $port);
+		if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, $baseApiURL); }
+		return $baseApiURL;
+	}
+
+	protected function AddLog($name, $daten, $format=0) {
 		$this->logCnt++;
+		$logSender = "[".__CLASS__."] - " . $name;
 		if($this->logLevel >= LogLevel::DEBUG) {
-			$logsender = sprintf("%02d-T%2d [%s] - %s", $this->logCnt, $_IPS['THREAD'], __CLASS__, $name);
-			$this->SendDebug($logsender, $daten, $format); 	
-		} else {
-			$this->SendDebug("[".__CLASS__."] - " . $name, $daten, $format); 	
-		}
+			$logSender = sprintf("%02d-T%2d [%s] - %s", $this->logCnt, $_IPS['THREAD'], __CLASS__, $name);
+		} 
+		$this->SendDebug($logSender, $daten, $format); 	
 	
 		if($this->enableIPSLogOutput) {
 			if($format == 0) {
-				IPS_LogMessage("[".__CLASS__."] - " . $name, $daten);	
+				IPS_LogMessage($logSender, $daten);	
 			} else {
-				IPS_LogMessage("[".__CLASS__."] - " . $name, $this->String2Hex($daten));			
+				IPS_LogMessage($logSender, $this->String2Hex($daten));			
 			}
 		}
 	}
