@@ -275,7 +275,6 @@ class SafeTechConnect extends IPSModule {
 			$apiResponse = $this->CurlGet($apiURL);	
 			if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, $apiResponse, 0); }
 
-
 			if (strpos($apiResponse, "ERROR: ADM") !== false) {
 
 				if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Need higher API Rights > Request 'FACTORY/(ADMIN) Rights ..."); }
@@ -284,9 +283,7 @@ class SafeTechConnect extends IPSModule {
 
 				$apiResponse = $this->CurlGet($apiURL);	
 				if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, $apiResponse, 0); }
-
 			}
-
 
 			if (strpos($apiResponse, "ERROR") !== false) {
 				//if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR :: Response for Request '%s' is '%s'", $key, $apiValue)); }
@@ -481,11 +478,11 @@ class SafeTechConnect extends IPSModule {
 		SetValue($this->GetIDForIdent("grantAdminRightsCnt"), 0); 
 		SetValue($this->GetIDForIdent("ErrorCnt"), 0); 
 		SetValue($this->GetIDForIdent("LastError"), "-"); 
+		SetValue($this->GetIDForIdent("ThreadDebug"), 0); 
 		SetValue($this->GetIDForIdent("instanzInactivCnt"), 0); 
 		SetValue($this->GetIDForIdent("processingTimeLog"), "-"); 
 		SetValue($this->GetIDForIdent("lastProcessingTotalDuration"), 0); 
 		SetValue($this->GetIDForIdent("LastDataReceived"), 0); 
-
 	}
 
 
@@ -820,6 +817,8 @@ class SafeTechConnect extends IPSModule {
 		IPS_SetHidden($this->RegisterVariableInteger("grantAdminRightsCnt", "Grant Admin Rights Cnt", "", 912), true);	
 		IPS_SetHidden($this->RegisterVariableInteger("ErrorCnt", "Error Cnt", "", 920), true);
 		IPS_SetHidden($this->RegisterVariableString("LastError", "Last Error", "", 921), true);
+		IPS_SetHidden($this->RegisterVariableInteger("ThreadDebug", "Thread Debug", "", 922), true);
+
 		IPS_SetHidden($this->RegisterVariableInteger("instanzInactivCnt", "Instanz Inactiv Cnt", "", 930), true);
 		IPS_SetHidden($this->RegisterVariableString("processingTimeLog", "ProcessingTime Log", "", 935), true);
 		IPS_SetHidden($this->RegisterVariableFloat("lastProcessingTotalDuration", "Last Processing Duration [ms]", "", 940), true);	

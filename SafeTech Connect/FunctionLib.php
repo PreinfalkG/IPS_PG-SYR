@@ -67,8 +67,16 @@ trait SafeTech_FunctionLib {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: close')); 	
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		
+
+            $threadDebug = GetValue($this->GetIDForIdent("ThreadDebug"));
+            if($threadDebug == 0) {
+                SetValue($this->GetIDForIdent("ThreadDebug"), $_IPS['THREAD']); 
+            }
+
 			$result =  curl_exec($ch);
 			$httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            SetValue($this->GetIDForIdent("ThreadDebug"),  0); 
 
 			if (FALSE === $result) {
 				//throw new Exception(curl_error($ch), curl_errno($ch));
@@ -81,6 +89,9 @@ trait SafeTech_FunctionLib {
                     SetValue($this->GetIDForIdent("skipAutoUpdate"), false);
                     SetValue($this->GetIDForIdent("receiveCnt"), GetValue($this->GetIDForIdent("receiveCnt")) + 1);  											
                     SetValue($this->GetIDForIdent("LastDataReceived"), time()); 
+
+                    $result = str_replace("ERROR", "ERR_OR", $result);
+
                 } else {
                     //$errorMsg = sprintf("Curl_WARN :: httpStatusCode >%s< [%s]", $httpStatusCode, $url);
                     $errorMsg = sprintf('{ "ERROR" : "httpStatusCode >%s< [%s]" }', $httpStatusCode, $url);

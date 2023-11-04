@@ -23,7 +23,7 @@ trait SafeTech_CommandSet {
 
         $configArr["AB"]     = array("Absperrung",  							"USER",		100,    "Measurement",	VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.Absperrung",	        false,	"1 Opened | 2 Closed");
                     
-        $configArr["PRF"]    = array("Aktiv Profile Nummer", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.AktivProfile",					        false,	"activ Profile Number");
+        $configArr["PRF"]    = array("Aktiv Profile Nummer", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		100,	"SYR.AktivProfile",			false,	"activ Profile Number");
         $configArr["PRN"]    = array("Number of Profiles", 						"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		110,	"",					        false,	"Number of profiles (available for user)");
                     
         $configArr["PA1"]    = array("Profile 1 available", 					"USER",		100,	"Profile",		VARIABLE::TYPE_INTEGER,	 1,		111,	"",					        false,	"0 Profile not avialable | 1 Profile avialable");
@@ -82,7 +82,7 @@ trait SafeTech_CommandSet {
         $configArr["WFC"]    = array("WiFi connect (SSID)",						"USER",		100,	"Network",		VARIABLE::TYPE_STRING,	 1,		100,	"",					        false,	"returns current saved SSID");
         $configArr["WFS"]    = array("WiFi State",								"USER",		100,	"Network",		VARIABLE::TYPE_INTEGER,	 1,		101,	"SYR.WFS",					false,	"0 Disconnected | 1 Connecting | 2 Connected");
         $configArr["WFR"]    = array("WiFi RSSI",								"USER",		100,	"Network",		VARIABLE::TYPE_INTEGER,	 1,		102,	"SYR.Percent",				false,	"1...100%");
-        $configArr["WFL"]    = array("WiFi Scan",								"USER",		100,	"Network",		VARIABLE::TYPE_STRING,	 1,		103,	"",					        false,	"WiFi list in JSON format");
+        $configArr["WFL"]    = array("WiFi Scan",								"USER",		100,	"Skip",		    VARIABLE::TYPE_STRING,	 1,		103,	"",					        false,	"WiFi list in JSON format");
         $configArr["WIP"]    = array("IP Address",								"USER",		100,	"Network",		VARIABLE::TYPE_STRING,	 1,		104,	"",					        false,	"IP address obtained from DHCP in format w.x.y.z");
         $configArr["WGW"]    = array("Default Gateway",							"USER",		100,	"Network",		VARIABLE::TYPE_STRING,	 1,		105,	"",					        false,	"Def. gateway obtained from DHCP in format w.x.y.z");
         $configArr["WNS"]    = array("WiFi Disable Scan",						"SERVICE",	100,	"Network",		VARIABLE::TYPE_INTEGER,	 1,		106,	"",				        	false,	"0 scan for AP before connection | 1 scan disabled before connection");
@@ -102,7 +102,7 @@ trait SafeTech_CommandSet {
         $configArr["NPS"]    = array("Turbine no pulse time",					"SERVICE",	140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Seconds",				false,	"0 ... 4294967295 seconds");
         $configArr["VTO"]    = array("Valve test ongoing",						"USER",		140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.InactiveActive",		false,	"0 inactive | 1 active");
         $configArr["AVO"]    = array("Volume single water consumption", 		"FACTORY", 	130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
-        $configArr["AVO2"]  = array("Volume single water consumption (Cumulative)", 	"FACTORY", 	-130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
+        $configArr["AVO2"]   = array("Volume single water consumption (Cumulative)", 	"FACTORY", 	-130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",	false,	"Volume of the current consumption process, Resets after finish, in mililiters");
                 
         $configArr["DBD"]    = array("MLT Pressure Drop",						"SERVICE",	100,	"Settings",		VARIABLE::TYPE_FLOAT,	 0.1,	310,	"SYR.Bar",					false,	"0.5 ... 3bar");
         $configArr["DBT"]    = array("MLT Pressure Drop Time",					"SERVICE",	100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		311,	"SYR.Seconds",				false,	"1 ... 15s");
@@ -131,7 +131,7 @@ trait SafeTech_CommandSet {
         $configArr["SRO"]    = array("Screen rotation",							"SERVICE",	100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		400,	"SYR.SRO",					false,	"0 Standard | 90 Rotated 90° | 180 Rotated 180° | 270 Rotated 270°");
         $configArr["CLP"]    = array("Cluster profile",							"USER",		100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		400,	"SYR.CLP",					false,	"0 Shows profile name | 1 Shows „Cluster” instead of profile name");
         $configArr["BPB"]    = array("Enable profile changes via button", 		"USER", 	100,	"Settings",		VARIABLE::TYPE_INTEGER,	 1,		400,	"SYR.BPB",					false,	"0 Profile change blocked | 1 Profile change possible");
-        $configArr["FSA"]    = array("Add (Pair) Floorsensor", 					"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		400,	"",					        false,	"Command adds/pairs Floorsensor with the given serial number Get command returns actual state of the pairing: 0 - not paired | 1 - pairing in progress (30s timeout) | 2 - paired OK");
+        $configArr["FSA"]    = array("Add (Pair) Floorsensor", 					"USER", 	100,	"Skip",		    VARIABLE::TYPE_STRING,	 1,		400,	"",					        false,	"Command adds/pairs Floorsensor with the given serial number Get command returns actual state of the pairing: 0 - not paired | 1 - pairing in progress (30s timeout) | 2 - paired OK");
         $configArr["FSL"]    = array("Paired Floorsensors list", 				"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		400,	"",					        false,	"Command returns paired Floorsensors list in JSON format");
                 
         $configArr["ALH"]    = array("Alarm history file", 						"USER", 	100,	"Settings",		VARIABLE::TYPE_STRING,	 1,		500,	"",					        false,	"Last 0 ... 100 entries in CSV format");
