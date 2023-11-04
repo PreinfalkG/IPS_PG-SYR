@@ -267,7 +267,7 @@ class SafeTechConnect extends IPSModule {
 			$varGroup = $configArrElem[ConfigArrOffset_GroupName];
 			
 			$logMsg = sprintf("%s | Level: %s | Group: %s", $responseKey, $userLevel, $varGroup);
-			if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, $logMsg); }
+			if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, $logMsg); }
 
 			$apiURL = $this->GetBaseApiURL() . "/safe-tec/get/" . $key;	
 			
