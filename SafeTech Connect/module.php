@@ -320,7 +320,13 @@ class SafeTechConnect extends IPSModule {
 					}
 
 					if($updateVariable) {
-						if($key == "ALA") {
+						if($key == "VOL") {
+							if($returnValue > 0) { 
+								$this->UpdateVariable($key, $returnValue, $configArrElem); 
+							} else {
+								if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: '%s' is '%s' > Skip UpdateVariable", $key, $returnValue)); }
+							}
+						} else if($key == "ALA") {
 							$this->UpdateVariable($key, $returnValue, $configArrElem);
 							$this->UpdateVariable("ALAi", hexdec($returnValue), $this->commandSetConfigArr["ALAi"]);
 						} else if ($key == "CND") {
