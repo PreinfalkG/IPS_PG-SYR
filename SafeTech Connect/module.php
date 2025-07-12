@@ -813,21 +813,21 @@ class SafeTechConnect extends IPSModule {
 
 	protected function RegisterVariables() {
 
-		IPS_SetHidden($this->RegisterVariableInteger("requestCnt", "Request Cnt", "", 900), true);
-		IPS_SetHidden($this->RegisterVariableInteger("receiveCnt", "Receive Cnt", "", 901), true);
+		IPS_SetHidden($this->RegisterVariableInteger("requestCnt", "Request Cnt", "", 900), false);
+		IPS_SetHidden($this->RegisterVariableInteger("receiveCnt", "Receive Cnt", "", 901), false);
 
-		IPS_SetHidden($this->RegisterVariableBoolean("updateInProcess", "Update In Process", "", 905), true);
-		IPS_SetHidden($this->RegisterVariableBoolean("skipAutoUpdate", "Skip Auto Update", "", 910), true);
+		IPS_SetHidden($this->RegisterVariableBoolean("updateInProcess", "Update In Process", "", 905), false);
+		IPS_SetHidden($this->RegisterVariableBoolean("skipAutoUpdate", "Skip Auto Update", "", 910), false);
 
-		IPS_SetHidden($this->RegisterVariableInteger("updateSkipCnt", "Update Skip Cnt", "", 911), true);	
-		IPS_SetHidden($this->RegisterVariableInteger("grantAdminRightsCnt", "Grant Admin Rights Cnt", "", 912), true);	
-		IPS_SetHidden($this->RegisterVariableInteger("ErrorCnt", "Error Cnt", "", 920), true);
-		IPS_SetHidden($this->RegisterVariableString("LastError", "Last Error", "", 921), true);
-		IPS_SetHidden($this->RegisterVariableInteger("ThreadDebug", "Thread Debug", "", 922), true);
+		IPS_SetHidden($this->RegisterVariableInteger("updateSkipCnt", "Update Skip Cnt", "", 911), false);	
+		IPS_SetHidden($this->RegisterVariableInteger("grantAdminRightsCnt", "Grant Admin Rights Cnt", "", 912), false);	
+		IPS_SetHidden($this->RegisterVariableInteger("ErrorCnt", "Error Cnt", "", 920), false);
+		IPS_SetHidden($this->RegisterVariableString("LastError", "Last Error", "", 921), false);
+		IPS_SetHidden($this->RegisterVariableInteger("ThreadDebug", "Thread Debug", "", 922), false);
 
-		IPS_SetHidden($this->RegisterVariableInteger("instanzInactivCnt", "Instanz Inactiv Cnt", "", 930), true);
-		IPS_SetHidden($this->RegisterVariableString("processingTimeLog", "ProcessingTime Log", "", 935), true);
-		IPS_SetHidden($this->RegisterVariableFloat("lastProcessingTotalDuration", "Last Processing Duration [ms]", "", 940), true);	
+		IPS_SetHidden($this->RegisterVariableInteger("instanzInactivCnt", "Instanz Inactiv Cnt", "", 930), false);
+		IPS_SetHidden($this->RegisterVariableString("processingTimeLog", "ProcessingTime Log", "", 935), false);
+		IPS_SetHidden($this->RegisterVariableFloat("lastProcessingTotalDuration", "Last Processing Duration [ms]", "", 940), false);	
 		IPS_SetHidden($this->RegisterVariableInteger("LastDataReceived", "Last Data Received", "~UnixTimestamp", 941), false);
 
 		$scriptScr = sprintf("<?php STC_UpdateGroup(%s, 'Alarm'); ?>",$this->InstanceID);
