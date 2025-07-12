@@ -275,7 +275,7 @@ class SafeTechConnect extends IPSModule {
 			$apiResponse = $this->CurlGet($apiURL);	
 			if($this->logLevel >= LogLevel::TRACE) { $this->AddLog(__METHOD__, $apiResponse, 0); }
 
-			if (strpos($apiResponse, "ERROR: ADM") !== false) {
+			if ((strpos($apiResponse, "ERROR: ADM") !== false) OR (strpos($apiResponse, "ERR_OR: ADM") !== false)) {
 
 				if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, "Need higher API Rights > Request 'FACTORY/(ADMIN) Rights ..."); }
 				$this->SetApiUserLevel(2);
