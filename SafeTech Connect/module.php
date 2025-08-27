@@ -323,6 +323,7 @@ class SafeTechConnect extends IPSModule {
 						if($key == "VOL") {
 							if($returnValue > 0) { 
 								$this->UpdateVariable($key, $returnValue, $configArrElem); 
+								$this->UpdateVariable("VOL2", $returnValue, $configArrElem); 
 							} else {
 								if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: '%s' is '%s' > Skip UpdateVariable", $key, $returnValue)); }
 							}
@@ -670,6 +671,11 @@ class SafeTechConnect extends IPSModule {
             IPS_CreateVariableProfile('SYR.Liter', VARIABLE::TYPE_INTEGER);
             IPS_SetVariableProfileText('SYR.Liter', "", " Liter" );
         } 		
+
+		if ( !IPS_VariableProfileExists('SYR.Liter.1') ) {
+            IPS_CreateVariableProfile('SYR.Liter', VARIABLE::TYPE_FLOAT);
+            IPS_SetVariableProfileText('SYR.Liter', "", " Liter" );
+        } 			
 
 		if ( !IPS_VariableProfileExists('SYR.Milliliter') ) {
             IPS_CreateVariableProfile('SYR.Milliliter', VARIABLE::TYPE_INTEGER);
