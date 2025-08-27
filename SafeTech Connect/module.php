@@ -673,8 +673,8 @@ class SafeTechConnect extends IPSModule {
         } 		
 
 		if ( !IPS_VariableProfileExists('SYR.Liter.1') ) {
-            IPS_CreateVariableProfile('SYR.Liter', VARIABLE::TYPE_FLOAT);
-            IPS_SetVariableProfileText('SYR.Liter', "", " Liter" );
+            IPS_CreateVariableProfile('SYR.Liter.1', VARIABLE::TYPE_FLOAT);
+            IPS_SetVariableProfileText('SYR.Liter.1', "", " Liter" );
         } 			
 
 		if ( !IPS_VariableProfileExists('SYR.Milliliter') ) {
