@@ -395,7 +395,7 @@ class SafeTechConnect extends IPSModule {
                     if($this->logLevel >= LogLevel::ERROR) { $this->AddLog(__METHOD__, sprintf("ERROR setting Profile '%s' to varID %s", $profileName, $varId)); }
                 }
             }
-            if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Variable '%s' created for '%s - %s'", $varId, $key, $name)); }
+            if($this->logLevel >= LogLevel::INFO) { $this->AddLog(__METHOD__, sprintf("Variable '%s' created for '%s - %s' [varType: %s]", $varId, $key, $name, $varType)); }
         } else {
             if($this->logLevel >= LogLevel::DEBUG) { $this->AddLog(__METHOD__, sprintf("Found Variable '%s' for '%s'", $varId, $key)); }
         }
