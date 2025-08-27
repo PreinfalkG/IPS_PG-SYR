@@ -99,7 +99,7 @@ trait SafeTech_CommandSet {
         $configArr["ALM"]    = array("Alarm Memory",							"SERVICE",	100,	"Alarm",		VARIABLE::TYPE_STRING,	 1,		300,	"",				        	false,	"Get alarm memory (eight alarms) with '->' before current alarm, FF = empty");
                 
         $configArr["VOL"]    = array("Cumulative Water Volume",					"SERVICE",	140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Liter",		        false,	"Vol[L]0...4294967295");
-        $configArr["VOL2"]   = array("Cumulative Water Volume (Float)",			"SERVICE",	140,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		200,	"SYR.Liter.1",		        false,	"Vol[L]0...4294967295 as Float");
+        $configArr["VOL2"]   = array("Cumulative Water Volume (Float)",			"SERVICE",	-140,	"Measurement",	VARIABLE::TYPE_FLOAT,	 1,		200,	"SYR.Liter.1",		        false,	"Vol[L]0...4294967295 as Float");
         $configArr["NPS"]    = array("Turbine no pulse time",					"SERVICE",	140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Seconds",				false,	"0 ... 4294967295 seconds");
         $configArr["VTO"]    = array("Valve test ongoing",						"USER",		140,	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.InactiveActive",		false,	"0 inactive | 1 active");
         $configArr["AVO"]    = array("Volume single water consumption", 		"FACTORY", 	130, 	"Measurement",	VARIABLE::TYPE_INTEGER,	 1,		200,	"SYR.Milliliter",		    false,	"Volume of the current consumption process, Resets after finish, in mililiters");
