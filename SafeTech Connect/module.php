@@ -323,7 +323,7 @@ class SafeTechConnect extends IPSModule {
 						if($key == "VOL") {
 							if($returnValue > 0) { 
 								$this->UpdateVariable($key, $returnValue, $configArrElem); 
-								$this->UpdateVariable("VOL2", $returnValue, $configArrElem); 
+								$this->UpdateVariable("VOL2", $returnValue, $this->commandSetConfigArr["VOL2"]); 
 							} else {
 								if($this->logLevel >= LogLevel::WARN) { $this->AddLog(__METHOD__, sprintf("WARN :: '%s' is '%s' > Skip UpdateVariable", $key, $returnValue)); }
 							}
